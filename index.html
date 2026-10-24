@@ -186,6 +186,27 @@
                         </div>
                     </div>
 
+                    <!-- Sposób rozliczenia prowizji -->
+                    <div class="form-group" id="commissionPaymentGroup">
+                        <div class="label-row">
+                            <label class="form-label">Sposób płatności prowizji</label>
+                            <span class="label-hint" id="commissionAmountBadge">0,00 zł</span>
+                        </div>
+                        <div class="segmented-control pill-control" role="radiogroup" aria-label="Sposób płatności prowizji">
+                            <button type="button" class="segmented-btn active" id="commUpfrontBtn" role="radio" aria-checked="true">
+                                <span class="tab-title">Opłacona z góry</span>
+                                <span class="tab-badge">Niższe raty</span>
+                            </button>
+                            <button type="button" class="segmented-btn" id="commFinancedBtn" role="radio" aria-checked="false">
+                                <span class="tab-title">Doliczona do kredytu</span>
+                                <span class="tab-badge">W ratach</span>
+                            </button>
+                        </div>
+                        <p class="field-hint" id="commissionHint">
+                            Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu odsetek.
+                        </p>
+                    </div>
+
                     <!-- Actions -->
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="computeBtn">
@@ -265,6 +286,7 @@
                         <div>
                             <span class="metric-title">Kwota kapitału</span>
                             <div class="metric-value font-bold" id="principalAmount">0,00 zł</div>
+                            <span class="metric-subtitle" id="principalSubtext">Kwota do dyspozycji</span>
                         </div>
                     </div>
 
@@ -277,6 +299,7 @@
                         <div>
                             <span class="metric-title">Prowizja banku</span>
                             <div class="metric-value font-bold" id="commissionCost">0,00 zł</div>
+                            <span class="metric-subtitle" id="commissionPaymentLabel">Opłacona z góry</span>
                         </div>
                     </div>
                 </div>

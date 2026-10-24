@@ -160,14 +160,15 @@ const LoanApp = (() => {
         maximumFractionDigits: 1
     });
 
-    // Stan
+    // Stan aplikacji
     const state = {
         amount: 100000,
         period: 5,
-        unit: 'years',      // 'years' | 'months'
+        unit: 'years',                  // 'years' | 'months'
         interest: 8.5,
         commission: 0,
-        type: 'stable',     // 'stable' | 'decreasing'
+        commissionPayment: 'upfront',   // 'upfront' (opłacona z góry) | 'financed' (doliczona do kredytu)
+        type: 'stable',                 // 'stable' | 'decreasing'
         lastResult: null
     };
 
@@ -188,6 +189,15 @@ const LoanApp = (() => {
             interestSlider: document.getElementById('interestSlider'),
             commissionInput: document.getElementById('commissionInput'),
             commissionSlider: document.getElementById('commissionSlider'),
+            
+            // Opcje prowizji
+            commUpfrontBtn: document.getElementById('commUpfrontBtn'),
+            commFinancedBtn: document.getElementById('commFinancedBtn'),
+            commissionAmountBadge: document.getElementById('commissionAmountBadge'),
+            commissionHint: document.getElementById('commissionHint'),
+            commissionPaymentLabel: document.getElementById('commissionPaymentLabel'),
+            principalSubtext: document.getElementById('principalSubtext'),
+
             tabStable: document.getElementById('tabStable'),
             tabDecreasing: document.getElementById('tabDecreasing'),
             resetBtn: document.getElementById('resetBtn'),
@@ -286,6 +296,28 @@ const LoanApp = (() => {
         calculate();
     }
 
+    function setCommissionPayment(paymentType) {
+        state.commissionPayment = paymentType;
+        const isUpfront = paymentType === 'upfront';
+
+        if (elements.commUpfrontBtn) {
+            elements.commUpfrontBtn.classList.toggle('active', isUpfront);
+            elements.commUpfrontBtn.setAttribute('aria-checked', isUpfront ? 'true' : 'false');
+        }
+        if (elements.commFinancedBtn) {
+            elements.commFinancedBtn.classList.toggle('active', !isUpfront);
+            elements.commFinancedBtn.setAttribute('aria-checked', !isUpfront ? 'true' : 'false');
+        }
+
+        if (elements.commissionHint) {
+            elements.commissionHint.textContent = isUpfront
+                ? 'Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu odsetek.'
+                : 'Prowizja doliczona do kwoty kredytu i spłacana w ratach — powiększa miesięczną ratę oraz całkowity koszt odsetek.';
+        }
+
+        calculate();
+    }
+
     function calculate() {
         const principal = parseFloat(elements.amountInput.value) || 0;
         let period = parseInt(elements.installmentsInput.value, 10) || 1;
@@ -296,19 +328,41 @@ const LoanApp = (() => {
 
         const months = state.unit === 'years' ? period * 12 : period;
         const commissionAmount = principal * commissionRate;
-        const totalLoanAmount = principal + commissionAmount;
+
+        // Aktualizacja kwoty prowizji w formularzu
+        if (elements.commissionAmountBadge) {
+            elements.commissionAmountBadge.textContent = currencyFormatter.format(commissionAmount);
+        }
+
+        // Kwota finansowana w ratach zależnie od wybranego sposobu płatności
+        let financedAmount = principal;
+        let upfrontPaid = 0;
+
+        if (state.commissionPayment === 'financed') {
+            financedAmount = principal + commissionAmount;
+            upfrontPaid = 0;
+        } else {
+            financedAmount = principal;
+            upfrontPaid = commissionAmount;
+        }
 
         let calcResult = null;
         if (state.type === 'stable') {
-            calcResult = LoanEngine.calculateAnnuity(totalLoanAmount, interestRate, months);
+            calcResult = LoanEngine.calculateAnnuity(financedAmount, interestRate, months);
         } else {
-            calcResult = LoanEngine.calculateDecreasing(totalLoanAmount, interestRate, months);
+            calcResult = LoanEngine.calculateDecreasing(financedAmount, interestRate, months);
         }
 
+        // Całkowity koszt kredytu (odsetki + prowizja)
         const totalCost = calcResult.totalInterest + commissionAmount;
+        // Całkowity wydatek klienta (spłacone raty + opłaty na start)
+        const totalRepaidOverall = calcResult.totalRepaid + upfrontPaid;
 
         state.lastResult = {
             principal,
+            financedAmount,
+            upfrontPaid,
+            commissionPayment: state.commissionPayment,
             months,
             period,
             unit: state.unit,
@@ -318,7 +372,8 @@ const LoanApp = (() => {
             type: state.type,
             firstInstallment: calcResult.firstInstallment,
             lastInstallment: calcResult.lastInstallment,
-            totalRepaid: calcResult.totalRepaid,
+            totalRepaid: totalRepaidOverall,
+            totalInstallmentsRepaid: calcResult.totalRepaid,
             totalInterest: calcResult.totalInterest,
             totalCost,
             schedule: calcResult.schedule
@@ -328,15 +383,18 @@ const LoanApp = (() => {
     }
 
     function renderResults(result) {
+        const isUpfront = result.commissionPayment === 'upfront';
+        const commissionLabel = isUpfront ? 'Opłacona z góry' : 'Doliczona do kredytu';
+
         // Główna karta z ratą
         if (result.type === 'stable') {
             elements.heroInstallmentLabel.textContent = 'Miesięczna rata (stała)';
             elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = `Stała kwota przez cały okres ${result.months} miesięcy`;
+            elements.heroInstallmentSubtext.textContent = `Stała kwota przez ${result.months} miesięcy · Prowizja ${commissionLabel.toLowerCase()}`;
         } else {
             elements.heroInstallmentLabel.textContent = 'Pierwsza rata (malejąca)';
             elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Rata maleje co miesiąc`;
+            elements.heroInstallmentSubtext.textContent = `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Prowizja ${commissionLabel.toLowerCase()}`;
         }
 
         // Kafelki podsumowania
@@ -345,7 +403,17 @@ const LoanApp = (() => {
         elements.principalAmount.textContent = currencyFormatter.format(result.principal);
         elements.commissionCost.textContent = currencyFormatter.format(result.commissionAmount);
 
-        // Pasek struktury
+        // Dodatkowe podpisy w kafelkach
+        if (elements.commissionPaymentLabel) {
+            elements.commissionPaymentLabel.textContent = commissionLabel;
+        }
+        if (elements.principalSubtext) {
+            elements.principalSubtext.textContent = !isUpfront
+                ? `Skredytowano: ${currencyFormatter.format(result.financedAmount)}`
+                : 'Kwota do dyspozycji';
+        }
+
+        // Pasek struktury spłaty
         const total = result.totalRepaid;
         const pPct = total > 0 ? (result.principal / total) * 100 : 100;
         const iPct = total > 0 ? (result.totalInterest / total) * 100 : 0;
@@ -429,6 +497,14 @@ const LoanApp = (() => {
         elements.tabStable.addEventListener('click', () => setInstallmentType('stable'));
         elements.tabDecreasing.addEventListener('click', () => setInstallmentType('decreasing'));
 
+        // Przełączniki rozliczenia prowizji
+        if (elements.commUpfrontBtn) {
+            elements.commUpfrontBtn.addEventListener('click', () => setCommissionPayment('upfront'));
+        }
+        if (elements.commFinancedBtn) {
+            elements.commFinancedBtn.addEventListener('click', () => setCommissionPayment('financed'));
+        }
+
         // Chipy / Presety kwot
         document.querySelectorAll('.chip[data-amount]').forEach(chip => {
             chip.addEventListener('click', () => {
@@ -481,6 +557,7 @@ const LoanApp = (() => {
                 if (!state.lastResult) calculate();
                 const r = state.lastResult;
                 const typeName = r.type === 'stable' ? 'Raty równe (annuitetowe)' : 'Raty malejące';
+                const commTypeDesc = r.commissionPayment === 'upfront' ? 'Opłacona z góry (środki własne)' : 'Doliczona do kredytu (w ratach)';
                 const rateLine = r.type === 'stable'
                     ? `Miesięczna rata: ${currencyFormatter.format(r.firstInstallment)}`
                     : `Pierwsza rata: ${currencyFormatter.format(r.firstInstallment)}\nOstatnia rata: ${currencyFormatter.format(r.lastInstallment)}`;
@@ -491,7 +568,7 @@ const LoanApp = (() => {
 Kwota kredytu:          ${currencyFormatter.format(r.principal)}
 Okres spłaty:           ${r.period} ${r.unit === 'years' ? 'lat' : 'miesięcy'} (${r.months} rat)
 Oprocentowanie:         ${r.interestPercent.toFixed(2)}%
-Prowizja banku:         ${r.commissionPercent.toFixed(2)}% (${currencyFormatter.format(r.commissionAmount)})
+Prowizja banku:         ${r.commissionPercent.toFixed(2)}% (${currencyFormatter.format(r.commissionAmount)}) [${commTypeDesc}]
 System spłaty:          ${typeName}
 ---------------------------------------------
 ${rateLine}
@@ -552,6 +629,7 @@ Wygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
                 elements.commissionSlider.value = '0';
                 updateSliderFill(elements.commissionSlider);
 
+                setCommissionPayment('upfront');
                 setInstallmentType('stable');
                 calculate();
                 showToast('Przywrócono parametry domyślne');
