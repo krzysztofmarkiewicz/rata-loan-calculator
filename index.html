@@ -1,1360 +1,375 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0">
-    <title>Narzędziownik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="color-scheme" content="light dark">
+    <title>Kalkulator Kredytowy | Precyzyjna Symulacja Finansowa</title>
+    <meta name="description" content="Nowoczesny kalkulator kredytowy: raty równe i malejące, harmonogram spłat, symulacja całkowitych kosztów i struktura spłaty.">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/mobile.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700;900&display=swap">
+    
+    <!-- FOUC Prevention Script -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('toolbox_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 </head>
 
 <body>
-    <div class="page-bgc">
-        <div class="bgc-shadow"></div>
-    </div>
-    <div class="page-container">
+    <!-- Ambient Gradient Glows -->
+    <div class="ambient-glow glow-top" aria-hidden="true"></div>
+    <div class="ambient-glow glow-bottom" aria-hidden="true"></div>
 
-        <nav class="nav">
-            <div class="menu-btn">
-                <div class="bar bar1 change"></div>
-                <div class="bar bar2 change"></div>
-                <div class="bar bar3 change"></div>
+    <div class="app-layout">
+        <!-- Modern Top Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title-wrap">
+                        <h1 class="brand-title">Kalkulator Kredytowy</h1>
+                        <span class="badge">PRO</span>
+                    </div>
+                    <p class="brand-subtitle">Precyzyjna symulacja rat, kosztów oraz harmonogramu spłat</p>
+                </div>
             </div>
-            <h1>Narzędziownik</h1>
-            <ul>
 
-            </ul>
-            <input type="checkbox" name="switchDayNigth" id="switchDayNigth">
+            <div class="header-actions">
+                <button type="button" class="btn-icon" id="printBtn" title="Drukuj symulację" aria-label="Drukuj symulację">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                </button>
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Przełącz motyw" title="Przełącz motyw">
+                    <span class="theme-icon sun-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </span>
+                    <span class="theme-icon moon-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </header>
 
-        </nav>
-
-        <main>
-            <section class="app app-loancalc hide">
-                <h2 class="app__header">Kalkulator Kredytowy</h2>
-                <div class="wrap-app">
-                    <div class="data">
-                        <form action="" method="get" class="data-form">
-                            <div class="app__item">
-                                <label for="amount">Kwota kredytu</label>
-                                <input type="number" min="0" max="3000000" step="1" pattern="\d*" name="amount"
-                                    placeholder="Wprowadź kwotę kredytu" class="data-form__form-item data-form__amount"
-                                    value="10000">
-                            </div>
-                            <div class="app__items">
-                                <div class="app__item app__items-grows">
-                                    <label for="number-of-installments">Okres kredytowania</label>
-                                    <input type="number" min="0" name="number-of-installments" placeholder="Podaj ilość"
-                                        class="data-form__number data-form__form-item" value="1">
-                                </div>
-                                <div class="app__item app__item-years-months">
-                                    <label for="years/months">&nbsp;</label>
-                                    <select name="years/months" class="data-form__form-item data-form__years-months">
-                                        <option value="years">Lata</option>
-                                        <option value="months">Miesiące</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="app__item">
-                                <label for="interest">Oprocentowanie (%)</label>
-                                <input type="number" min="0" name="interest"
-                                    class="data-form__interest data-form__form-item" value="10">
-                            </div>
-                            <div class="app__item">
-                                <label for="commission">Prowizja (%)</label>
-                                <input type="number" min="0" name="commission"
-                                    class="data-form__commission data-form__form-item" value="0">
-                            </div>
-                            <div class="app__item">
-                                <div class="app__buttons buttons">
-                                    <button type="reset" class="app__btn reset-button">Reset</button>
-                                    <button type="submit" class="app__btn compute-button">Oblicz</button>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                    <div class="results results--loancalc">
-                        <div class="results__buttons ">
-                            <button class="result-button result-button--loancalc  result-button--active table">Raty
-                                równe</button>
-                            <div class="result  result__stable-installments stable">
-                            </div>
-                        </div>
-                        <div class="results__buttons ">
-                            <button class="result-button result-button--loancalc decreasing">Raty malejące</button>
-                            <div class="result result__decreasing-installments decreasing hide">
-                                <div class="full-list-decreasing-installments">
-
-                                </div>
-                            </div>
-                        </div>
-
+        <!-- Main Dashboard 2-Column Grid -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Inputs Form -->
+            <section class="card form-card" aria-labelledby="formHeading">
+                <div class="card-header">
+                    <div class="card-step-badge">1</div>
+                    <div>
+                        <h2 id="formHeading" class="card-title">Parametry kredytu</h2>
+                        <p class="card-description">Wprowadź warunki finansowania lub wybierz gotowe wartości</p>
                     </div>
                 </div>
-            </section>
-            <section class="app app-currency hide ">
 
-                <h2 class="app__header">Konwerter Walut</h2>
-
-                <div class="wrap-app">
-                    <div class="data">
-                        <form action="" method="get" class="data-form">
-
-                            <div class="app__items">
-                                <div class="app__item app__items-grows">
-                                    <label for="amount-first">Waluta 1</label>
-                                    <input type="number" min="0" name="amount-first" placeholder="Podaj ilość"
-                                        class="data-form__number data-form__form-item amount amount-first" value="1">
-                                </div>
-                                <div class="app__item app__item-years-months">
-                                    <label for="currency-first">&nbsp;</label>
-                                    <select name="currency-first"
-                                        class="data-form__form-item data-form__currency currency-first">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="app__items">
-                                <div class="app__item app__items-grows">
-                                    <label for="amount-second">Waluta 2</label>
-                                    <input type="number" min="0" name="amount-second" placeholder="Podaj ilość"
-                                        class="data-form__number data-form__form-item amount amount-second" value="1">
-                                </div>
-                                <div class="app__item">
-                                    <label for="currency-second">&nbsp;</label>
-                                    <select name="currency-second"
-                                        class="data-form__form-item data-form__currency currency-second">
-                                    </select>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                    <div class="currency-list">
-                        <div class="search-currency-wrap data">
-                            <label for="search-currency">Wyszukiwarka walut</label>
-                            <input type="text" name="search-currency"
-                                placeholder="szukaj po nazwie kraju, nazwie waluty lub skrócie" id=""
-                                class="search-currency data-form__form-item">
-                            <!-- <p>sssss</p> -->
+                <form id="loanForm" class="loan-form" novalidate>
+                    <!-- Type of installments tabs -->
+                    <div class="form-group">
+                        <label class="form-label">Rodzaj rat</label>
+                        <div class="segmented-control pill-control" role="tablist">
+                            <button type="button" class="segmented-btn active" id="tabStable" role="tab" aria-selected="true">
+                                <span class="tab-title">Raty równe</span>
+                                <span class="tab-badge">Popularne</span>
+                            </button>
+                            <button type="button" class="segmented-btn" id="tabDecreasing" role="tab" aria-selected="false">
+                                <span class="tab-title">Raty malejące</span>
+                                <span class="tab-badge">Niższy koszt</span>
+                            </button>
                         </div>
-                        <table class="currency-table">
-                            <thead class>
-                                <tr>
-                                    <th><strong>Kraj waluty:</strong></th>
-                                    <th class="text-md-center">Skrót:</th>
-                                    <th class="text-md-center">Nazwa waluty:</th>
-                                    <th class="text-md-center">Dzieli się na:</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="currency-tr">
-                                    <td><strong>Afganistan</strong></td>
-                                    <td class="text-md-center">AFN</td>
-                                    <td class="text-md-center">Afgani</td>
-                                    <td class="text-md-center">100 Pul</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Albania</strong></td>
-                                    <td class="text-md-center">ALL</td>
-                                    <td class="text-md-center">Lek</td>
-                                    <td class="text-md-center">100 Qindarek</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Algieria</strong></td>
-                                    <td class="text-md-center">DZD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Andora</strong></td>
-                                    <td class="text-md-center">EUR</td>
-                                    <td class="text-md-center">Euro</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Angola</strong></td>
-                                    <td class="text-md-center">AON</td>
-                                    <td class="text-md-center">Kwanza</td>
-                                    <td class="text-md-center">100 Lwei</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Antigua i Barbuda</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Antyle Holenderskie</strong></td>
-                                    <td class="text-md-center">ANG</td>
-                                    <td class="text-md-center">Gulden antylski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Arabia Saudyjska</strong></td>
-                                    <td class="text-md-center">SAR</td>
-                                    <td class="text-md-center">Rial</td>
-                                    <td class="text-md-center">100 Halali</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Argentyna</strong></td>
-                                    <td class="text-md-center">ARS</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Armenia</strong></td>
-                                    <td class="text-md-center">AMD</td>
-                                    <td class="text-md-center">Dram armeński</td>
-                                    <td class="text-md-center">100 Luma</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Aruba</strong></td>
-                                    <td class="text-md-center">AWG</td>
-                                    <td class="text-md-center">Florin</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Australia</strong></td>
-                                    <td class="text-md-center">AUD</td>
-                                    <td class="text-md-center">Dolar australijski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Azerbejdżan</strong></td>
-                                    <td class="text-md-center">AZM</td>
-                                    <td class="text-md-center">Manat azerski</td>
-                                    <td class="text-md-center">100 Gopików</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bahamy</strong></td>
-                                    <td class="text-md-center">BSD</td>
-                                    <td class="text-md-center">Dolar bahamski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bahrajn</strong></td>
-                                    <td class="text-md-center">BHD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">1000 Filsów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bangladesz</strong></td>
-                                    <td class="text-md-center">BDT</td>
-                                    <td class="text-md-center">Taka bengalska</td>
-                                    <td class="text-md-center">100 Paisa</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Barbados</strong></td>
-                                    <td class="text-md-center">BBD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Belize</strong></td>
-                                    <td class="text-md-center">BZD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Benin</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bhutan</strong></td>
-                                    <td class="text-md-center">BTN</td>
-                                    <td class="text-md-center">Ngultrum</td>
-                                    <td class="text-md-center">100 Czetrum</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Białoruś</strong></td>
-                                    <td class="text-md-center">BYN</td>
-                                    <td class="text-md-center">Rubel białoruski</td>
-                                    <td class="text-md-center">100 Kopiejek</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Boliwia</strong></td>
-                                    <td class="text-md-center">BOB</td>
-                                    <td class="text-md-center">Boliviano (Peso)</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bośnia i Hercegowina</strong></td>
-                                    <td class="text-md-center">BAM</td>
-                                    <td class="text-md-center">Marka zamienna</td>
-                                    <td class="text-md-center">100 Fenigów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Botswana</strong></td>
-                                    <td class="text-md-center">BWP</td>
-                                    <td class="text-md-center">Pula</td>
-                                    <td class="text-md-center">100 Thebe</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Brazylia</strong></td>
-                                    <td class="text-md-center">BRL</td>
-                                    <td class="text-md-center">Real</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Brunei</strong></td>
-                                    <td class="text-md-center">BND</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Bułgaria</strong></td>
-                                    <td class="text-md-center">BGN</td>
-                                    <td class="text-md-center">Lew bułgarski</td>
-                                    <td class="text-md-center">100 Stotinek</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Burkina Faso</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Burundi</strong></td>
-                                    <td class="text-md-center">BIF</td>
-                                    <td class="text-md-center">Frank burundyjski</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Chile</strong></td>
-                                    <td class="text-md-center">CLP</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Chiny</strong></td>
-                                    <td class="text-md-center">CNY</td>
-                                    <td class="text-md-center">Juan (renminbi)</td>
-                                    <td class="text-md-center">10 Jiao / 10 Fenów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Chorwacja</strong></td>
-                                    <td class="text-md-center">HRK</td>
-                                    <td class="text-md-center">Kuna chorwacka</td>
-                                    <td class="text-md-center">100 Lip</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Czad</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Czechy</strong></td>
-                                    <td class="text-md-center">CZK</td>
-                                    <td class="text-md-center">Korona czeska</td>
-                                    <td class="text-md-center">100 Halerzy</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Dania</strong></td>
-                                    <td class="text-md-center">DKK</td>
-                                    <td class="text-md-center">Korona duńska</td>
-                                    <td class="text-md-center">100 øre</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Dominika</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Dominikana</strong></td>
-                                    <td class="text-md-center">DOP</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Dżibuti</strong></td>
-                                    <td class="text-md-center">DJF</td>
-                                    <td class="text-md-center">Frank</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Egipt</strong></td>
-                                    <td class="text-md-center">EGP</td>
-                                    <td class="text-md-center">Funt egipski (genih)</td>
-                                    <td class="text-md-center">100 Piastrów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Ekwador</strong></td>
-                                    <td class="text-md-center">USD</td>
-                                    <td class="text-md-center">Dolar amerykański</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Erytrea</strong></td>
-                                    <td class="text-md-center">ERN</td>
-                                    <td class="text-md-center">Nakfa</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Estonia</strong></td>
-                                    <td class="text-md-center">EEK</td>
-                                    <td class="text-md-center">Korona estońska</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Etiopia</strong></td>
-                                    <td class="text-md-center">ETB</td>
-                                    <td class="text-md-center">Birr</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Fidżi</strong></td>
-                                    <td class="text-md-center">FJD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Filipiny</strong></td>
-                                    <td class="text-md-center">PHP</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gabon</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gambia</strong></td>
-                                    <td class="text-md-center">GMD</td>
-                                    <td class="text-md-center">Dalasi</td>
-                                    <td class="text-md-center">100 Butut</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Ghana</strong></td>
-                                    <td class="text-md-center">GHC</td>
-                                    <td class="text-md-center">Cedi</td>
-                                    <td class="text-md-center">100 Pesewa</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gibraltar</strong></td>
-                                    <td class="text-md-center">GIP</td>
-                                    <td class="text-md-center">Funt</td>
-                                    <td class="text-md-center">100 Pensów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Grenada</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gruzja</strong></td>
-                                    <td class="text-md-center">GEL</td>
-                                    <td class="text-md-center">Lari</td>
-                                    <td class="text-md-center">100 Tetri</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gujana</strong></td>
-                                    <td class="text-md-center">GYD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gwatemala</strong></td>
-                                    <td class="text-md-center">GTQ</td>
-                                    <td class="text-md-center">Quetzal</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gwinea</strong></td>
-                                    <td class="text-md-center">GNF</td>
-                                    <td class="text-md-center">Frank</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gwinea Bissau</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Gwinea Równikowa</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Haiti</strong></td>
-                                    <td class="text-md-center">HTG</td>
-                                    <td class="text-md-center">Gourde</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Honduras</strong></td>
-                                    <td class="text-md-center">HNL</td>
-                                    <td class="text-md-center">Lempira</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Hongkong</strong></td>
-                                    <td class="text-md-center">HKD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Indie</strong></td>
-                                    <td class="text-md-center">INR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Paisa</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Indonezja</strong></td>
-                                    <td class="text-md-center">IDR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Senów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Irak</strong></td>
-                                    <td class="text-md-center">IQD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">1000 Filów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Iran</strong></td>
-                                    <td class="text-md-center">IRR</td>
-                                    <td class="text-md-center">Rial</td>
-                                    <td class="text-md-center">100 Dinarów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Islandia</strong></td>
-                                    <td class="text-md-center">ISK</td>
-                                    <td class="text-md-center">Korona</td>
-                                    <td class="text-md-center">100 Aurar</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Izrael</strong></td>
-                                    <td class="text-md-center">ILS</td>
-                                    <td class="text-md-center">Nowy szekel</td>
-                                    <td class="text-md-center">100 Agorot</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Jamajka</strong></td>
-                                    <td class="text-md-center">JMD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Japonia</strong></td>
-                                    <td class="text-md-center">JPY</td>
-                                    <td class="text-md-center">jen japoński</td>
-                                    <td class="text-md-center">100 Senów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Jemen</strong></td>
-                                    <td class="text-md-center">YER</td>
-                                    <td class="text-md-center">Rial</td>
-                                    <td class="text-md-center">100 Filsów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Jordania</strong></td>
-                                    <td class="text-md-center">JOD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">100 Piastrów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kambodża</strong></td>
-                                    <td class="text-md-center">KHR</td>
-                                    <td class="text-md-center">Riel</td>
-                                    <td class="text-md-center">100 Senów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kamerun</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kanada</strong></td>
-                                    <td class="text-md-center">CAD</td>
-                                    <td class="text-md-center">Dolar kanadyjski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Katar</strong></td>
-                                    <td class="text-md-center">QAR</td>
-                                    <td class="text-md-center">Rial</td>
-                                    <td class="text-md-center">100 Dirhamów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kazachstan</strong></td>
-                                    <td class="text-md-center">KZT</td>
-                                    <td class="text-md-center">Tenge</td>
-                                    <td class="text-md-center">100 Tiyn</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kenia</strong></td>
-                                    <td class="text-md-center">KES</td>
-                                    <td class="text-md-center">Szyling</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kirgistan</strong></td>
-                                    <td class="text-md-center">KGS</td>
-                                    <td class="text-md-center">Som</td>
-                                    <td class="text-md-center">100 Tiyn</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kiribati</strong></td>
-                                    <td class="text-md-center">AUD</td>
-                                    <td class="text-md-center">Dolar australijski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kolumbia</strong></td>
-                                    <td class="text-md-center">COP</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Komory</strong></td>
-                                    <td class="text-md-center">KMF</td>
-                                    <td class="text-md-center">Frank</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kongo</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kongo - Republika Demokratyczn</strong></td>
-                                    <td class="text-md-center">CDF</td>
-                                    <td class="text-md-center">Frank</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Korea Południowa</strong></td>
-                                    <td class="text-md-center">KRW</td>
-                                    <td class="text-md-center">Won</td>
-                                    <td class="text-md-center">100 Dzon</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Korea Północna</strong></td>
-                                    <td class="text-md-center">WN</td>
-                                    <td class="text-md-center">Won</td>
-                                    <td class="text-md-center">100 Hhon</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kostaryka</strong></td>
-                                    <td class="text-md-center">CRC</td>
-                                    <td class="text-md-center">Colon</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kuba</strong></td>
-                                    <td class="text-md-center">CUP</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Kuwejt</strong></td>
-                                    <td class="text-md-center">KWD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">1000 Filów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Laos</strong></td>
-                                    <td class="text-md-center">LAK</td>
-                                    <td class="text-md-center">Kip</td>
-                                    <td class="text-md-center">100 At</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Lesotho</strong></td>
-                                    <td class="text-md-center">LSL</td>
-                                    <td class="text-md-center">Loti</td>
-                                    <td class="text-md-center">100 Lisente</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Liban</strong></td>
-                                    <td class="text-md-center">LBP</td>
-                                    <td class="text-md-center">Funt</td>
-                                    <td class="text-md-center">100 Piastrów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Liberia</strong></td>
-                                    <td class="text-md-center">LRD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Libia</strong></td>
-                                    <td class="text-md-center">LYD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">1000 Dirhamów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Liechtenstein</strong></td>
-                                    <td class="text-md-center">CHF</td>
-                                    <td class="text-md-center">Frank szwajcarski</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Litwa</strong></td>
-                                    <td class="text-md-center">LTL</td>
-                                    <td class="text-md-center">Lit litewski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Łotwa</strong></td>
-                                    <td class="text-md-center">LVL</td>
-                                    <td class="text-md-center">Łat łotewski</td>
-                                    <td class="text-md-center">100 Santimów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Macedonia</strong></td>
-                                    <td class="text-md-center">MKD</td>
-                                    <td class="text-md-center">Denar</td>
-                                    <td class="text-md-center">100 Deni</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Madagaskar</strong></td>
-                                    <td class="text-md-center">MGA</td>
-                                    <td class="text-md-center">Ariary</td>
-                                    <td class="text-md-center">5 Iraimbilanji</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Makau</strong></td>
-                                    <td class="text-md-center">MOP</td>
-                                    <td class="text-md-center">Pataca</td>
-                                    <td class="text-md-center">100 Avos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Malawi</strong></td>
-                                    <td class="text-md-center">MWK</td>
-                                    <td class="text-md-center">Kwacha</td>
-                                    <td class="text-md-center">100 Tambala</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Malediwy</strong></td>
-                                    <td class="text-md-center">MVR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Laria</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Malezja</strong></td>
-                                    <td class="text-md-center">MYR</td>
-                                    <td class="text-md-center">Ringgit</td>
-                                    <td class="text-md-center">100 Senów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mali</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Maroko</strong></td>
-                                    <td class="text-md-center">MAD</td>
-                                    <td class="text-md-center">Dirham</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mauretania</strong></td>
-                                    <td class="text-md-center">MRO</td>
-                                    <td class="text-md-center">Ugijja</td>
-                                    <td class="text-md-center">5 Khoume</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mauritius</strong></td>
-                                    <td class="text-md-center">MUR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Meksyk</strong></td>
-                                    <td class="text-md-center">MXN</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mikronezja</strong></td>
-                                    <td class="text-md-center">USD</td>
-                                    <td class="text-md-center">Dolar amerykański</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Moldawia</strong></td>
-                                    <td class="text-md-center">MDL</td>
-                                    <td class="text-md-center">Lej</td>
-                                    <td class="text-md-center">100 Bani</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Monako</strong></td>
-                                    <td class="text-md-center">EUR</td>
-                                    <td class="text-md-center">Euro</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mongolia</strong></td>
-                                    <td class="text-md-center">MNT</td>
-                                    <td class="text-md-center">Tugrik</td>
-                                    <td class="text-md-center">100 mongów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Mozambik</strong></td>
-                                    <td class="text-md-center">MZN</td>
-                                    <td class="text-md-center">Metical</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Myanmar (Birma)</strong></td>
-                                    <td class="text-md-center">MMK</td>
-                                    <td class="text-md-center">Kyat</td>
-                                    <td class="text-md-center">100 Pia</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Namibia</strong></td>
-                                    <td class="text-md-center">NAD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nauru</strong></td>
-                                    <td class="text-md-center">AUD</td>
-                                    <td class="text-md-center">Dolar australijski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nepal</strong></td>
-                                    <td class="text-md-center">NPR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Paisa</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Niger</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nigeria</strong></td>
-                                    <td class="text-md-center">NGN</td>
-                                    <td class="text-md-center">Naira</td>
-                                    <td class="text-md-center">100 Kobo</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nikaragua</strong></td>
-                                    <td class="text-md-center">NIO</td>
-                                    <td class="text-md-center">Cordoba oro</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Norwegia</strong></td>
-                                    <td class="text-md-center">NOK</td>
-                                    <td class="text-md-center">Korona norweska</td>
-                                    <td class="text-md-center">100 øre</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nowa Kaledonia</strong></td>
-                                    <td class="text-md-center">XPF</td>
-                                    <td class="text-md-center">Frank CFP</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Nowa Zelandia</strong></td>
-                                    <td class="text-md-center">NZD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Oman</strong></td>
-                                    <td class="text-md-center">OMR</td>
-                                    <td class="text-md-center">Rial</td>
-                                    <td class="text-md-center">100 Baiza</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Pakistan</strong></td>
-                                    <td class="text-md-center">PKR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Paisa</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Palau</strong></td>
-                                    <td class="text-md-center">USD</td>
-                                    <td class="text-md-center">Dolar amerykański</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Panama</strong></td>
-                                    <td class="text-md-center">PAB</td>
-                                    <td class="text-md-center">Balboa</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Papua - Nowa Gwinea</strong></td>
-                                    <td class="text-md-center">PGK</td>
-                                    <td class="text-md-center">Kina</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Paragwaj</strong></td>
-                                    <td class="text-md-center">PYG</td>
-                                    <td class="text-md-center">Guarani</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Peru</strong></td>
-                                    <td class="text-md-center">PEN</td>
-                                    <td class="text-md-center">Nowy sol</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Polinezja</strong></td>
-                                    <td class="text-md-center">XPF</td>
-                                    <td class="text-md-center">Frank CFP</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Polska</strong></td>
-                                    <td class="text-md-center">PLN</td>
-                                    <td class="text-md-center">Polski Złoty</td>
-                                    <td class="text-md-center">100 groszy</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Republika Środkowoafrykańska</strong></td>
-                                    <td class="text-md-center">XAF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Republika Zielonego Przylądka</strong></td>
-                                    <td class="text-md-center">CVE</td>
-                                    <td class="text-md-center">Escudo</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Rosja</strong></td>
-                                    <td class="text-md-center">RUB</td>
-                                    <td class="text-md-center">Rubel rosyjski</td>
-                                    <td class="text-md-center">100 Kopiejek</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Rpa</strong></td>
-                                    <td class="text-md-center">ZAR</td>
-                                    <td class="text-md-center">Rand</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Rumunia</strong></td>
-                                    <td class="text-md-center">RON</td>
-                                    <td class="text-md-center">Lej rumuński</td>
-                                    <td class="text-md-center">100 Bani</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Rwanda</strong></td>
-                                    <td class="text-md-center">RWF</td>
-                                    <td class="text-md-center">Frank</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Saint Kitts i Nevis</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Saint Lucia</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Saint Vincent i Grenadyny</strong></td>
-                                    <td class="text-md-center">XCD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Salwador</strong></td>
-                                    <td class="text-md-center">SVC</td>
-                                    <td class="text-md-center">Colon</td>
-                                    <td class="text-md-center">100 Centavos</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Samoa Zachodnie</strong></td>
-                                    <td class="text-md-center">WST</td>
-                                    <td class="text-md-center">Tala</td>
-                                    <td class="text-md-center">100 Sene</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>San Marino</strong></td>
-                                    <td class="text-md-center">EUR</td>
-                                    <td class="text-md-center">Euro</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>San Tome</strong></td>
-                                    <td class="text-md-center">STD</td>
-                                    <td class="text-md-center">Dobra</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Senegal</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Serbia i Czarnogóra</strong></td>
-                                    <td class="text-md-center">RSD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">100 Para</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Seszele</strong></td>
-                                    <td class="text-md-center">SCR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Sierra Leone</strong></td>
-                                    <td class="text-md-center">SLL</td>
-                                    <td class="text-md-center">Leone</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Singapur</strong></td>
-                                    <td class="text-md-center">SGD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Somalia</strong></td>
-                                    <td class="text-md-center">SOS</td>
-                                    <td class="text-md-center">Szyling</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Sri Lanka</strong></td>
-                                    <td class="text-md-center">LKR</td>
-                                    <td class="text-md-center">Rupia</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Suazi</strong></td>
-                                    <td class="text-md-center">SZL</td>
-                                    <td class="text-md-center">Lilangeni</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Sudan</strong></td>
-                                    <td class="text-md-center">SDD</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">100 Piastrów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Surinam</strong></td>
-                                    <td class="text-md-center">SRG</td>
-                                    <td class="text-md-center">Gulden</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Syria</strong></td>
-                                    <td class="text-md-center">SYP</td>
-                                    <td class="text-md-center">Funt</td>
-                                    <td class="text-md-center">100 Piastrów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Szkocja</strong></td>
-                                    <td class="text-md-center">SCP</td>
-                                    <td class="text-md-center">Funt szkocki</td>
-                                    <td class="text-md-center">100 Pensów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Szwajcaria</strong></td>
-                                    <td class="text-md-center">CHF</td>
-                                    <td class="text-md-center">Frank szwajcarski</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Szwecja</strong></td>
-                                    <td class="text-md-center">SEK</td>
-                                    <td class="text-md-center">Korona szwedzka</td>
-                                    <td class="text-md-center">100 öre</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tadżykistan</strong></td>
-                                    <td class="text-md-center">TJS</td>
-                                    <td class="text-md-center">Somoni</td>
-                                    <td class="text-md-center">100 diramów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tajlandia</strong></td>
-                                    <td class="text-md-center">THB</td>
-                                    <td class="text-md-center">Bat</td>
-                                    <td class="text-md-center">100 Satangów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tajwan</strong></td>
-                                    <td class="text-md-center">TWD</td>
-                                    <td class="text-md-center">Nowy Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tanzania</strong></td>
-                                    <td class="text-md-center">TZS</td>
-                                    <td class="text-md-center">Szyling</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Togo</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tonga</strong></td>
-                                    <td class="text-md-center">TOP</td>
-                                    <td class="text-md-center">Pa'anga</td>
-                                    <td class="text-md-center">100 Seniti</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Trynidad i Tobago</strong></td>
-                                    <td class="text-md-center">TTD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tunezja</strong></td>
-                                    <td class="text-md-center">TND</td>
-                                    <td class="text-md-center">Dinar</td>
-                                    <td class="text-md-center">1000 Milimów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Turcja</strong></td>
-                                    <td class="text-md-center">TRY</td>
-                                    <td class="text-md-center">Lira turecka</td>
-                                    <td class="text-md-center">100 Kuruszy</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Turkmenistan</strong></td>
-                                    <td class="text-md-center">TMM</td>
-                                    <td class="text-md-center">Manat</td>
-                                    <td class="text-md-center">100 Tenesi</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Tuvalu</strong></td>
-                                    <td class="text-md-center">AUD</td>
-                                    <td class="text-md-center">Dolar australijski</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>UE</strong></td>
-                                    <td class="text-md-center">EUR</td>
-                                    <td class="text-md-center">Euro</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Uganda</strong></td>
-                                    <td class="text-md-center">UGX</td>
-                                    <td class="text-md-center">Szyling</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Ukraina</strong></td>
-                                    <td class="text-md-center">UAH</td>
-                                    <td class="text-md-center">Hrywna ukraińska</td>
-                                    <td class="text-md-center">100 Kopiejek</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Urugwaj</strong></td>
-                                    <td class="text-md-center">UYU</td>
-                                    <td class="text-md-center">Peso</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>USA</strong></td>
-                                    <td class="text-md-center">USD</td>
-                                    <td class="text-md-center">Dolar amerykański</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Uzbekistan</strong></td>
-                                    <td class="text-md-center">UZS</td>
-                                    <td class="text-md-center">Som</td>
-                                    <td class="text-md-center">100 Tiyn</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Vanuatu</strong></td>
-                                    <td class="text-md-center">VUV</td>
-                                    <td class="text-md-center">Vatu</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Watykan</strong></td>
-                                    <td class="text-md-center">EUR</td>
-                                    <td class="text-md-center">Euro</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wenezuela</strong></td>
-                                    <td class="text-md-center">VEB</td>
-                                    <td class="text-md-center">Boliwar</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Węgry</strong></td>
-                                    <td class="text-md-center">HUF</td>
-                                    <td class="text-md-center">Forint węgierski</td>
-                                    <td class="text-md-center">100 Fillerów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wielka Brytania</strong></td>
-                                    <td class="text-md-center">GBP</td>
-                                    <td class="text-md-center">Funt brytyjski</td>
-                                    <td class="text-md-center">100 Pensów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wietnam</strong></td>
-                                    <td class="text-md-center">VND</td>
-                                    <td class="text-md-center">Dong</td>
-                                    <td class="text-md-center">100 Xu</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wybrzeże Kości Słoniowej</strong></td>
-                                    <td class="text-md-center">XOF</td>
-                                    <td class="text-md-center">Frank CFA</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wyspy Marshalla</strong></td>
-                                    <td class="text-md-center">USD</td>
-                                    <td class="text-md-center">Dolar amerykański</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wyspy Salomona</strong></td>
-                                    <td class="text-md-center">SBD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Wyspy Św. Tomasza i Książęca</strong></td>
-                                    <td class="text-md-center">STD</td>
-                                    <td class="text-md-center">Dobra</td>
-                                    <td class="text-md-center">100 Centymów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Zambia</strong></td>
-                                    <td class="text-md-center">ZMK</td>
-                                    <td class="text-md-center">Kwacha</td>
-                                    <td class="text-md-center">100 Ngwee</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Zimbabwe</strong></td>
-                                    <td class="text-md-center">ZWD</td>
-                                    <td class="text-md-center">Dolar</td>
-                                    <td class="text-md-center">100 Centów</td>
-                                </tr>
-                                <tr class="currency-tr">
-                                    <td><strong>Zjednoczone Emiraty Arabskie</strong></td>
-                                    <td class="text-md-center">AED</td>
-                                    <td class="text-md-center">Dirham</td>
-                                    <td class="text-md-center">100 Filów</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    </div>
+
+                    <!-- Kwota kredytu -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="amountInput" class="form-label">Kwota kredytu</label>
+                            <span class="label-hint">PLN</span>
+                        </div>
+                        <div class="input-affix-wrap">
+                            <input type="number" id="amountInput" class="form-input text-lg font-bold" min="1000" max="3000000" step="500" value="100000" required>
+                            <span class="input-suffix">zł</span>
+                        </div>
+                        <input type="range" id="amountSlider" class="form-range" min="1000" max="1000000" step="1000" value="100000" aria-label="Suwak kwoty kredytu">
+                        
+                        <!-- Quick presets -->
+                        <div class="chips-row">
+                            <button type="button" class="chip" data-amount="30000">30 tys.</button>
+                            <button type="button" class="chip" data-amount="50000">50 tys.</button>
+                            <button type="button" class="chip" data-amount="100000">100 tys.</button>
+                            <button type="button" class="chip" data-amount="300000">300 tys.</button>
+                            <button type="button" class="chip" data-amount="500000">500 tys.</button>
+                        </div>
+                    </div>
+
+                    <!-- Okres kredytowania -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="installmentsInput" class="form-label">Okres kredytowania</label>
+                            <div class="unit-toggle">
+                                <button type="button" class="unit-btn active" id="unitYears">Lata</button>
+                                <button type="button" class="unit-btn" id="unitMonths">Miesiące</button>
+                            </div>
+                        </div>
+                        <div class="input-affix-wrap">
+                            <input type="number" id="installmentsInput" class="form-input text-lg font-bold" min="1" max="35" value="5" required>
+                            <span class="input-suffix" id="unitSuffix">lat</span>
+                        </div>
+                        <input type="range" id="installmentsSlider" class="form-range" min="1" max="35" step="1" value="5" aria-label="Suwak okresu kredytowania">
+                        
+                        <!-- Quick period presets -->
+                        <div class="chips-row">
+                            <button type="button" class="chip" data-period="1" data-unit="years">1 rok</button>
+                            <button type="button" class="chip" data-period="3" data-unit="years">3 lata</button>
+                            <button type="button" class="chip" data-period="5" data-unit="years">5 lat</button>
+                            <button type="button" class="chip" data-period="10" data-unit="years">10 lat</button>
+                            <button type="button" class="chip" data-period="25" data-unit="years">25 lat</button>
+                            <button type="button" class="chip" data-period="30" data-unit="years">30 lat</button>
+                        </div>
+                    </div>
+
+                    <!-- Row: Oprocentowanie & Prowizja -->
+                    <div class="form-row-2">
+                        <!-- Oprocentowanie -->
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label for="interestInput" class="form-label">Oprocentowanie</label>
+                                <span class="label-hint">w skali roku</span>
+                            </div>
+                            <div class="input-affix-wrap">
+                                <input type="number" id="interestInput" class="form-input font-bold" min="0" max="25" step="0.1" value="8.5" required>
+                                <span class="input-suffix">%</span>
+                            </div>
+                            <input type="range" id="interestSlider" class="form-range" min="0.5" max="20" step="0.1" value="8.5" aria-label="Suwak oprocentowania">
+                        </div>
+
+                        <!-- Prowizja -->
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label for="commissionInput" class="form-label">Prowizja banku</label>
+                                <span class="label-hint">jednorazowa</span>
+                            </div>
+                            <div class="input-affix-wrap">
+                                <input type="number" id="commissionInput" class="form-input font-bold" min="0" max="15" step="0.1" value="0">
+                                <span class="input-suffix">%</span>
+                            </div>
+                            <input type="range" id="commissionSlider" class="form-range" min="0" max="10" step="0.1" value="0" aria-label="Suwak prowizji">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="computeBtn">
+                            <span>Przelicz raty</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn btn-ghost" id="resetBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Domyślne</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Column: Results & Analytics -->
+            <section class="card results-card" id="resultsSection" aria-labelledby="resultsHeading">
+                <div class="card-header">
+                    <div class="card-step-badge card-step-badge--accent">2</div>
+                    <div>
+                        <h2 id="resultsHeading" class="card-title">Podsumowanie finansowe</h2>
+                        <p class="card-description">Miesięczna rata oraz pełna kalkulacja spłaty kapitału i odsetek</p>
                     </div>
                 </div>
-            </section>
-            <section class="app app-mathcalc hide ">
-                <h2 class="app__header">Kalkulator</h2>
-                <div class="wrap-app">
-                    <div class="data">
-                        <form action="" method="get" class="data-form">
-                            <div class="app__item">
-                                <label for="mathCalc"></label>
-                                <div class="data-form__form-item data-form__form-item--mathCalc mathCalcResult">0</div>
-                                <!-- <input type="number" readonly="readonly" min="0" max="3000000" step="1" pattern="\d*"
-                                    name="mathCalc" placeholder="0"
-                                    class="data-form__form-item data-form__form-item--mathCalc mathCalcResult"
-                                    value="0"> -->
-                            </div>
-                        </form>
 
-                        <div class="app__item">
-                            <div class="app__buttons app__buttons--mathcalc buttons">
-                                <button type="reset" type-btn=""
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">C</button>
-                                <button type="submit" type-btn=""
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">+/-</button>
-                                <button type="submit" type-btn="operatorr"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">%</button>
-                                <button type="submit" type-btn="operator"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">/</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">1</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">2</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">3</button>
-                                <button type="submit" type-btn="operator"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">X</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">4</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">5</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">6</button>
-                                <button type="submit" type-btn="operator"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">-</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">7</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">8</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">9</button>
-                                <button type="submit" type-btn="operator"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">+</button>
-                                <button type="submit" type-btn="number"
-                                    class="app__btn app__btn--mathcalc mathCalcBtn app__btn--mathcalc0">0</button>
-                                <button type="submit" type-btn=""
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">.</button>
-                                <button type="submit" type-btn=""
-                                    class="app__btn app__btn--mathcalc mathCalcBtn">=</button>
-                            </div>
-                        </div>
-
-
+                <!-- Hero Metric Card -->
+                <div class="hero-result-card">
+                    <div class="hero-content">
+                        <span class="hero-label" id="heroInstallmentLabel">Miesięczna rata (stała)</span>
+                        <div class="hero-number" id="heroInstallmentValue">0,00 zł</div>
+                        <p class="hero-subtext" id="heroInstallmentSubtext">Kalkulacja w czasie rzeczywistym</p>
                     </div>
-                    <div class="results results--mathCalc">
-                        <div class="results__buttons">
-                            <button class="result-button memoryBtn">Historia</button>
-                            <button class="app__btn app__btn--clear-history">Wyczyść historię</button>
-                            <div class="result result--memory">
-                            </div>
+                    <div class="hero-glow-element" aria-hidden="true"></div>
+                </div>
+
+                <!-- Key Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-icon-wrap metric-icon-total">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                <line x1="6" y1="12" x2="18" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                            </svg>
                         </div>
-                        <div class="results__buttons ">
-                            <button class="result-button saveResultsBtn">Zapisane wyniki</button>
-                            <div class="result saveResults hide">
-                            </div>
+                        <div>
+                            <span class="metric-title">Całkowita spłata</span>
+                            <div class="metric-value font-bold" id="totalRepayment">0,00 zł</div>
                         </div>
                     </div>
 
+                    <div class="metric-box">
+                        <div class="metric-icon-wrap metric-icon-cost">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="metric-title">Całkowity koszt</span>
+                            <div class="metric-value font-bold text-accent" id="totalCost">0,00 zł</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-box">
+                        <div class="metric-icon-wrap metric-icon-principal">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="metric-title">Kwota kapitału</span>
+                            <div class="metric-value font-bold" id="principalAmount">0,00 zł</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-box">
+                        <div class="metric-icon-wrap metric-icon-commission">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="metric-title">Prowizja banku</span>
+                            <div class="metric-value font-bold" id="commissionCost">0,00 zł</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Breakdown Bar -->
+                <div class="breakdown-wrap">
+                    <div class="breakdown-header">
+                        <span class="breakdown-title">Struktura całkowitej spłaty</span>
+                    </div>
+                    <div class="breakdown-bar" role="progressbar" aria-label="Struktura kosztów kredytu">
+                        <div class="bar-segment bar-principal" id="barPrincipal" style="width: 70%"></div>
+                        <div class="bar-segment bar-interest" id="barInterest" style="width: 30%"></div>
+                        <div class="bar-segment bar-commission" id="barCommission" style="width: 0%"></div>
+                    </div>
+                    <div class="breakdown-legend">
+                        <div class="legend-item">
+                            <span class="dot dot-principal"></span>
+                            <span class="legend-name">Kapitał:</span>
+                            <span class="legend-val" id="legendPrincipalVal">0 zł</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot dot-interest"></span>
+                            <span class="legend-name">Odsetki:</span>
+                            <span class="legend-val" id="legendInterestVal">0 zł</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot dot-commission"></span>
+                            <span class="legend-name">Prowizja:</span>
+                            <span class="legend-val" id="legendCommissionVal">0 zł</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amortisation Schedule Accordion Section -->
+                <div class="schedule-section">
+                    <div class="schedule-header">
+                        <div>
+                            <h3 class="schedule-title">Harmonogram rat</h3>
+                            <span class="schedule-count text-muted" id="scheduleRowsCount">(60 rat)</span>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="toggleScheduleBtn" aria-expanded="false">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                            <span>Pokaż pełny harmonogram</span>
+                        </button>
+                    </div>
+
+                    <div class="schedule-container collapsed" id="scheduleContainer">
+                        <div class="table-responsive">
+                            <table class="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-nr">Nr raty</th>
+                                        <th class="col-installment">Rata całkowita</th>
+                                        <th class="col-principal">Część kapitałowa</th>
+                                        <th class="col-interest">Część odsetkowa</th>
+                                        <th class="col-remaining">Pozostały kapitał</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scheduleTableBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Actions: Copy & Info -->
+                <div class="results-actions">
+                    <button type="button" class="btn btn-secondary btn-w-full" id="copySummaryBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Kopiuj podsumowanie do schowka</span>
+                    </button>
                 </div>
             </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu ustala bank.</p>
+        </footer>
     </div>
-    </main>
-    </div>
-    <script src="js/main.js"></script>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- JavaScript modules -->
+    <script src="js/theme.js"></script>
     <script src="js/app_loancalc.js"></script>
-    <script src="js/app_currency.js"></script>
-    <script src="js/app_mathcalc.js"></script>
-    <script src="js/test.js"></script>
-    <script src=""></script>
-
 </body>
 
 </html>
