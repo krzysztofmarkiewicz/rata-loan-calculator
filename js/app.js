@@ -191,6 +191,7 @@ const LoanApp = (() => {
             commissionSlider: document.getElementById('commissionSlider'),
             
             // Opcje prowizji
+            commissionPaymentGroup: document.getElementById('commissionPaymentGroup'),
             commUpfrontBtn: document.getElementById('commUpfrontBtn'),
             commFinancedBtn: document.getElementById('commFinancedBtn'),
             commissionAmountBadge: document.getElementById('commissionAmountBadge'),
@@ -329,9 +330,13 @@ const LoanApp = (() => {
         const months = state.unit === 'years' ? period * 12 : period;
         const commissionAmount = principal * commissionRate;
 
-        // Aktualizacja kwoty prowizji w formularzu
+        // Aktualizacja kwoty prowizji w formularzu oraz widoczności sekcji
+        const hasCommission = commissionAmount > 0;
         if (elements.commissionAmountBadge) {
             elements.commissionAmountBadge.textContent = currencyFormatter.format(commissionAmount);
+        }
+        if (elements.commissionPaymentGroup) {
+            elements.commissionPaymentGroup.style.display = hasCommission ? 'flex' : 'none';
         }
 
         // Kwota finansowana w ratach zależnie od wybranego sposobu płatności
@@ -384,17 +389,24 @@ const LoanApp = (() => {
 
     function renderResults(result) {
         const isUpfront = result.commissionPayment === 'upfront';
-        const commissionLabel = isUpfront ? 'Opłacona z góry' : 'Doliczona do kredytu';
+        const hasCommission = result.commissionAmount > 0;
+        const commissionLabel = hasCommission
+            ? (isUpfront ? 'Opłacona z góry' : 'Doliczona do kredytu')
+            : 'Brak prowizji';
 
         // Główna karta z ratą
         if (result.type === 'stable') {
             elements.heroInstallmentLabel.textContent = 'Miesięczna rata (stała)';
             elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = `Stała kwota przez ${result.months} miesięcy · Prowizja ${commissionLabel.toLowerCase()}`;
+            elements.heroInstallmentSubtext.textContent = hasCommission
+                ? `Stała kwota przez ${result.months} miesięcy · Prowizja ${commissionLabel.toLowerCase()}`
+                : `Stała kwota przez cały okres ${result.months} miesięcy`;
         } else {
             elements.heroInstallmentLabel.textContent = 'Pierwsza rata (malejąca)';
             elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Prowizja ${commissionLabel.toLowerCase()}`;
+            elements.heroInstallmentSubtext.textContent = hasCommission
+                ? `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Prowizja ${commissionLabel.toLowerCase()}`
+                : `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Rata maleje co miesiąc`;
         }
 
         // Kafelki podsumowania
@@ -408,7 +420,7 @@ const LoanApp = (() => {
             elements.commissionPaymentLabel.textContent = commissionLabel;
         }
         if (elements.principalSubtext) {
-            elements.principalSubtext.textContent = !isUpfront
+            elements.principalSubtext.textContent = (hasCommission && !isUpfront)
                 ? `Skredytowano: ${currencyFormatter.format(result.financedAmount)}`
                 : 'Kwota do dyspozycji';
         }
