@@ -6,18 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light dark">
     <title>Kalkulator Kredytowy | Precyzyjna Symulacja Finansowa</title>
-    <meta name="description" content="Nowoczesny kalkulator kredytowy: raty równe i malejące, harmonogram spłat, symulacja całkowitych kosztów i struktura spłaty.">
-    
+    <meta name="description"
+        content="Nowoczesny kalkulator kredytowy: raty równe i malejące, harmonogram spłat, symulacja całkowitych kosztów i struktura spłaty.">
+
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="css/style.css">
-    
+
     <!-- FOUC Prevention Script -->
     <script>
-        (function() {
+        (function () {
             const saved = localStorage.getItem('toolbox_theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = saved || (prefersDark ? 'dark' : 'light');
@@ -36,7 +38,8 @@
         <header class="app-header">
             <div class="brand">
                 <div class="brand-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
@@ -44,26 +47,31 @@
                 <div>
                     <div class="brand-title-wrap">
                         <h1 class="brand-title" id="brandTitle">Kalkulator Kredytowy</h1>
-                        <span class="badge">PRO</span>
                     </div>
-                    <p class="brand-subtitle" id="brandSubtitle">Precyzyjna symulacja rat, kosztów oraz harmonogramu spłat</p>
+                    <p class="brand-subtitle" id="brandSubtitle">Precyzyjna symulacja rat, kosztów oraz harmonogramu
+                        spłat</p>
                 </div>
             </div>
 
             <div class="header-actions">
                 <!-- Language Toggle -->
-                <button type="button" class="btn-lang" id="langToggleBtn" title="Switch to English" aria-label="Switch to English">EN</button>
+                <button type="button" class="btn-lang" id="langToggleBtn" title="Switch to English"
+                    aria-label="Switch to English">EN</button>
 
-                <button type="button" class="btn-icon" id="printBtn" title="Drukuj symulację" aria-label="Drukuj symulację">
-                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" class="btn-icon" id="printBtn" title="Drukuj symulację"
+                    aria-label="Drukuj symulację">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 6 2 18 2 18 9"></polyline>
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                         <rect x="6" y="14" width="12" height="8"></rect>
                     </svg>
                 </button>
-                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Przełącz motyw" title="Przełącz motyw">
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Przełącz motyw"
+                    title="Przełącz motyw">
                     <span class="theme-icon sun-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="5"></circle>
                             <line x1="12" y1="1" x2="12" y2="3"></line>
                             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -76,7 +84,8 @@
                         </svg>
                     </span>
                     <span class="theme-icon moon-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
                     </span>
@@ -92,7 +101,8 @@
                     <div class="card-step-badge">1</div>
                     <div>
                         <h2 id="formHeading" class="card-title">Parametry kredytu</h2>
-                        <p class="card-description" id="formDesc">Wprowadź warunki finansowania lub wybierz gotowe wartości</p>
+                        <p class="card-description" id="formDesc">Wprowadź warunki finansowania lub wybierz gotowe
+                            wartości</p>
                     </div>
                 </div>
 
@@ -101,11 +111,13 @@
                     <div class="form-group">
                         <label class="form-label" id="labelInstallmentType">Rodzaj rat</label>
                         <div class="segmented-control pill-control" role="tablist">
-                            <button type="button" class="segmented-btn active" id="tabStable" role="tab" aria-selected="true">
+                            <button type="button" class="segmented-btn active" id="tabStable" role="tab"
+                                aria-selected="true">
                                 <span class="tab-title">Raty równe</span>
                                 <span class="tab-badge">Popularne</span>
                             </button>
-                            <button type="button" class="segmented-btn" id="tabDecreasing" role="tab" aria-selected="false">
+                            <button type="button" class="segmented-btn" id="tabDecreasing" role="tab"
+                                aria-selected="false">
                                 <span class="tab-title">Raty malejące</span>
                                 <span class="tab-badge">Niższy koszt</span>
                             </button>
@@ -119,11 +131,13 @@
                             <span class="label-hint" id="hintAmount">PLN</span>
                         </div>
                         <div class="input-affix-wrap">
-                            <input type="number" id="amountInput" class="form-input text-lg font-bold" min="1000" max="3000000" step="500" value="100000" required>
+                            <input type="number" id="amountInput" class="form-input text-lg font-bold" min="1000"
+                                max="3000000" step="500" value="100000" required>
                             <span class="input-suffix" id="suffixAmount">zł</span>
                         </div>
-                        <input type="range" id="amountSlider" class="form-range" min="1000" max="1000000" step="1000" value="100000" aria-label="Suwak kwoty kredytu">
-                        
+                        <input type="range" id="amountSlider" class="form-range" min="1000" max="1000000" step="1000"
+                            value="100000" aria-label="Suwak kwoty kredytu">
+
                         <!-- Quick presets -->
                         <div class="chips-row">
                             <button type="button" class="chip" data-amount="30000" id="chip30k">30 tys.</button>
@@ -137,26 +151,37 @@
                     <!-- Okres kredytowania -->
                     <div class="form-group">
                         <div class="label-row">
-                            <label for="installmentsInput" class="form-label" id="labelPeriod">Okres kredytowania</label>
+                            <label for="installmentsInput" class="form-label" id="labelPeriod">Okres
+                                kredytowania</label>
                             <div class="unit-toggle">
-                                <button type="button" class="unit-btn active" id="unitYears"><span id="unitYearsBtn">Lata</span></button>
-                                <button type="button" class="unit-btn" id="unitMonths"><span id="unitMonthsBtn">Miesiące</span></button>
+                                <button type="button" class="unit-btn active" id="unitYears"><span
+                                        id="unitYearsBtn">Lata</span></button>
+                                <button type="button" class="unit-btn" id="unitMonths"><span
+                                        id="unitMonthsBtn">Miesiące</span></button>
                             </div>
                         </div>
                         <div class="input-affix-wrap">
-                            <input type="number" id="installmentsInput" class="form-input text-lg font-bold" min="1" max="35" value="5" required>
+                            <input type="number" id="installmentsInput" class="form-input text-lg font-bold" min="1"
+                                max="35" value="5" required>
                             <span class="input-suffix" id="unitSuffix">lat</span>
                         </div>
-                        <input type="range" id="installmentsSlider" class="form-range" min="1" max="35" step="1" value="5" aria-label="Suwak okresu kredytowania">
-                        
+                        <input type="range" id="installmentsSlider" class="form-range" min="1" max="35" step="1"
+                            value="5" aria-label="Suwak okresu kredytowania">
+
                         <!-- Quick period presets -->
                         <div class="chips-row">
-                            <button type="button" class="chip" data-period="1" data-unit="years" id="chipPeriod1">1 rok</button>
-                            <button type="button" class="chip" data-period="3" data-unit="years" id="chipPeriod3">3 lata</button>
-                            <button type="button" class="chip" data-period="5" data-unit="years" id="chipPeriod5">5 lat</button>
-                            <button type="button" class="chip" data-period="10" data-unit="years" id="chipPeriod10">10 lat</button>
-                            <button type="button" class="chip" data-period="25" data-unit="years" id="chipPeriod25">25 lat</button>
-                            <button type="button" class="chip" data-period="30" data-unit="years" id="chipPeriod30">30 lat</button>
+                            <button type="button" class="chip" data-period="1" data-unit="years" id="chipPeriod1">1
+                                rok</button>
+                            <button type="button" class="chip" data-period="3" data-unit="years" id="chipPeriod3">3
+                                lata</button>
+                            <button type="button" class="chip" data-period="5" data-unit="years" id="chipPeriod5">5
+                                lat</button>
+                            <button type="button" class="chip" data-period="10" data-unit="years" id="chipPeriod10">10
+                                lat</button>
+                            <button type="button" class="chip" data-period="25" data-unit="years" id="chipPeriod25">25
+                                lat</button>
+                            <button type="button" class="chip" data-period="30" data-unit="years" id="chipPeriod30">30
+                                lat</button>
                         </div>
                     </div>
 
@@ -169,23 +194,28 @@
                                 <span class="label-hint" id="hintInterest">w skali roku</span>
                             </div>
                             <div class="input-affix-wrap">
-                                <input type="number" id="interestInput" class="form-input font-bold" min="0" max="25" step="0.1" value="8.5" required>
+                                <input type="number" id="interestInput" class="form-input font-bold" min="0" max="25"
+                                    step="0.1" value="8.5" required>
                                 <span class="input-suffix">%</span>
                             </div>
-                            <input type="range" id="interestSlider" class="form-range" min="0.5" max="20" step="0.1" value="8.5" aria-label="Suwak oprocentowania">
+                            <input type="range" id="interestSlider" class="form-range" min="0.5" max="20" step="0.1"
+                                value="8.5" aria-label="Suwak oprocentowania">
                         </div>
 
                         <!-- Prowizja -->
                         <div class="form-group">
                             <div class="label-row">
-                                <label for="commissionInput" class="form-label" id="labelCommission">Prowizja banku</label>
+                                <label for="commissionInput" class="form-label" id="labelCommission">Prowizja
+                                    banku</label>
                                 <span class="label-hint" id="hintCommission">jednorazowa</span>
                             </div>
                             <div class="input-affix-wrap">
-                                <input type="number" id="commissionInput" class="form-input font-bold" min="0" max="15" step="0.1" value="0">
+                                <input type="number" id="commissionInput" class="form-input font-bold" min="0" max="15"
+                                    step="0.1" value="0">
                                 <span class="input-suffix">%</span>
                             </div>
-                            <input type="range" id="commissionSlider" class="form-range" min="0" max="10" step="0.1" value="0" aria-label="Suwak prowizji">
+                            <input type="range" id="commissionSlider" class="form-range" min="0" max="10" step="0.1"
+                                value="0" aria-label="Suwak prowizji">
                         </div>
                     </div>
 
@@ -195,18 +225,22 @@
                             <label class="form-label" id="labelCommPayment">Sposób płatności prowizji</label>
                             <span class="label-hint" id="commissionAmountBadge">0,00 zł</span>
                         </div>
-                        <div class="segmented-control pill-control" role="radiogroup" aria-label="Sposób płatności prowizji">
-                            <button type="button" class="segmented-btn active" id="commUpfrontBtn" role="radio" aria-checked="true">
+                        <div class="segmented-control pill-control" role="radiogroup"
+                            aria-label="Sposób płatności prowizji">
+                            <button type="button" class="segmented-btn active" id="commUpfrontBtn" role="radio"
+                                aria-checked="true">
                                 <span class="tab-title">Opłacona z góry</span>
                                 <span class="tab-badge">Niższe raty</span>
                             </button>
-                            <button type="button" class="segmented-btn" id="commFinancedBtn" role="radio" aria-checked="false">
+                            <button type="button" class="segmented-btn" id="commFinancedBtn" role="radio"
+                                aria-checked="false">
                                 <span class="tab-title">Doliczona do kredytu</span>
                                 <span class="tab-badge">W ratach</span>
                             </button>
                         </div>
                         <p class="field-hint" id="commissionHint">
-                            Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu odsetek.
+                            Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu
+                            odsetek.
                         </p>
                     </div>
 
@@ -214,13 +248,15 @@
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="computeBtn">
                             <span>Przelicz raty</span>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </button>
                         <button type="button" class="btn btn-ghost" id="resetBtn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="1 4 1 10 7 10"></polyline>
                                 <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                             </svg>
@@ -236,7 +272,8 @@
                     <div class="card-step-badge card-step-badge--accent">2</div>
                     <div>
                         <h2 id="resultsHeading" class="card-title">Podsumowanie finansowe</h2>
-                        <p class="card-description" id="resultsDesc">Miesięczna rata oraz pełna kalkulacja spłaty kapitału i odsetek</p>
+                        <p class="card-description" id="resultsDesc">Miesięczna rata oraz pełna kalkulacja spłaty
+                            kapitału i odsetek</p>
                     </div>
                 </div>
 
@@ -254,7 +291,8 @@
                 <div class="metrics-grid">
                     <div class="metric-box">
                         <div class="metric-icon-wrap metric-icon-total">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                                 <line x1="6" y1="12" x2="18" y2="12"></line>
                                 <line x1="12" y1="8" x2="12" y2="16"></line>
@@ -268,7 +306,8 @@
 
                     <div class="metric-box">
                         <div class="metric-icon-wrap metric-icon-cost">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="8" x2="12" y2="12"></line>
                                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -282,8 +321,10 @@
 
                     <div class="metric-box">
                         <div class="metric-icon-wrap metric-icon-principal">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                </path>
                             </svg>
                         </div>
                         <div>
@@ -295,8 +336,11 @@
 
                     <div class="metric-box">
                         <div class="metric-icon-wrap metric-icon-commission">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                </polygon>
                             </svg>
                         </div>
                         <div>
@@ -343,8 +387,10 @@
                             <h3 class="schedule-title" id="scheduleTitle">Harmonogram rat</h3>
                             <span class="schedule-count text-muted" id="scheduleRowsCount">(60 rat)</span>
                         </div>
-                        <button type="button" class="btn btn-outline btn-sm" id="toggleScheduleBtn" aria-expanded="false">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button type="button" class="btn btn-outline btn-sm" id="toggleScheduleBtn"
+                            aria-expanded="false">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                             <span>Pokaż pełny harmonogram</span>
@@ -374,7 +420,8 @@
                 <!-- Secondary Actions: Copy & Info -->
                 <div class="results-actions">
                     <button type="button" class="btn btn-secondary btn-w-full" id="copySummaryBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
@@ -386,7 +433,8 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p id="footerText">Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu ustala bank.</p>
+            <p id="footerText">Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu
+                ustala bank.</p>
         </footer>
     </div>
 
