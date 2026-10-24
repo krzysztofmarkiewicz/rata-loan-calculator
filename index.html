@@ -43,14 +43,17 @@
                 </div>
                 <div>
                     <div class="brand-title-wrap">
-                        <h1 class="brand-title">Kalkulator Kredytowy</h1>
+                        <h1 class="brand-title" id="brandTitle">Kalkulator Kredytowy</h1>
                         <span class="badge">PRO</span>
                     </div>
-                    <p class="brand-subtitle">Precyzyjna symulacja rat, kosztów oraz harmonogramu spłat</p>
+                    <p class="brand-subtitle" id="brandSubtitle">Precyzyjna symulacja rat, kosztów oraz harmonogramu spłat</p>
                 </div>
             </div>
 
             <div class="header-actions">
+                <!-- Language Toggle -->
+                <button type="button" class="btn-lang" id="langToggleBtn" title="Switch to English" aria-label="Switch to English">EN</button>
+
                 <button type="button" class="btn-icon" id="printBtn" title="Drukuj symulację" aria-label="Drukuj symulację">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -89,14 +92,14 @@
                     <div class="card-step-badge">1</div>
                     <div>
                         <h2 id="formHeading" class="card-title">Parametry kredytu</h2>
-                        <p class="card-description">Wprowadź warunki finansowania lub wybierz gotowe wartości</p>
+                        <p class="card-description" id="formDesc">Wprowadź warunki finansowania lub wybierz gotowe wartości</p>
                     </div>
                 </div>
 
                 <form id="loanForm" class="loan-form" novalidate>
                     <!-- Type of installments tabs -->
                     <div class="form-group">
-                        <label class="form-label">Rodzaj rat</label>
+                        <label class="form-label" id="labelInstallmentType">Rodzaj rat</label>
                         <div class="segmented-control pill-control" role="tablist">
                             <button type="button" class="segmented-btn active" id="tabStable" role="tab" aria-selected="true">
                                 <span class="tab-title">Raty równe</span>
@@ -112,32 +115,32 @@
                     <!-- Kwota kredytu -->
                     <div class="form-group">
                         <div class="label-row">
-                            <label for="amountInput" class="form-label">Kwota kredytu</label>
-                            <span class="label-hint">PLN</span>
+                            <label for="amountInput" class="form-label" id="labelAmount">Kwota kredytu</label>
+                            <span class="label-hint" id="hintAmount">PLN</span>
                         </div>
                         <div class="input-affix-wrap">
                             <input type="number" id="amountInput" class="form-input text-lg font-bold" min="1000" max="3000000" step="500" value="100000" required>
-                            <span class="input-suffix">zł</span>
+                            <span class="input-suffix" id="suffixAmount">zł</span>
                         </div>
                         <input type="range" id="amountSlider" class="form-range" min="1000" max="1000000" step="1000" value="100000" aria-label="Suwak kwoty kredytu">
                         
                         <!-- Quick presets -->
                         <div class="chips-row">
-                            <button type="button" class="chip" data-amount="30000">30 tys.</button>
-                            <button type="button" class="chip" data-amount="50000">50 tys.</button>
-                            <button type="button" class="chip" data-amount="100000">100 tys.</button>
-                            <button type="button" class="chip" data-amount="300000">300 tys.</button>
-                            <button type="button" class="chip" data-amount="500000">500 tys.</button>
+                            <button type="button" class="chip" data-amount="30000" id="chip30k">30 tys.</button>
+                            <button type="button" class="chip" data-amount="50000" id="chip50k">50 tys.</button>
+                            <button type="button" class="chip" data-amount="100000" id="chip100k">100 tys.</button>
+                            <button type="button" class="chip" data-amount="300000" id="chip300k">300 tys.</button>
+                            <button type="button" class="chip" data-amount="500000" id="chip500k">500 tys.</button>
                         </div>
                     </div>
 
                     <!-- Okres kredytowania -->
                     <div class="form-group">
                         <div class="label-row">
-                            <label for="installmentsInput" class="form-label">Okres kredytowania</label>
+                            <label for="installmentsInput" class="form-label" id="labelPeriod">Okres kredytowania</label>
                             <div class="unit-toggle">
-                                <button type="button" class="unit-btn active" id="unitYears">Lata</button>
-                                <button type="button" class="unit-btn" id="unitMonths">Miesiące</button>
+                                <button type="button" class="unit-btn active" id="unitYears"><span id="unitYearsBtn">Lata</span></button>
+                                <button type="button" class="unit-btn" id="unitMonths"><span id="unitMonthsBtn">Miesiące</span></button>
                             </div>
                         </div>
                         <div class="input-affix-wrap">
@@ -148,12 +151,12 @@
                         
                         <!-- Quick period presets -->
                         <div class="chips-row">
-                            <button type="button" class="chip" data-period="1" data-unit="years">1 rok</button>
-                            <button type="button" class="chip" data-period="3" data-unit="years">3 lata</button>
-                            <button type="button" class="chip" data-period="5" data-unit="years">5 lat</button>
-                            <button type="button" class="chip" data-period="10" data-unit="years">10 lat</button>
-                            <button type="button" class="chip" data-period="25" data-unit="years">25 lat</button>
-                            <button type="button" class="chip" data-period="30" data-unit="years">30 lat</button>
+                            <button type="button" class="chip" data-period="1" data-unit="years" id="chipPeriod1">1 rok</button>
+                            <button type="button" class="chip" data-period="3" data-unit="years" id="chipPeriod3">3 lata</button>
+                            <button type="button" class="chip" data-period="5" data-unit="years" id="chipPeriod5">5 lat</button>
+                            <button type="button" class="chip" data-period="10" data-unit="years" id="chipPeriod10">10 lat</button>
+                            <button type="button" class="chip" data-period="25" data-unit="years" id="chipPeriod25">25 lat</button>
+                            <button type="button" class="chip" data-period="30" data-unit="years" id="chipPeriod30">30 lat</button>
                         </div>
                     </div>
 
@@ -162,8 +165,8 @@
                         <!-- Oprocentowanie -->
                         <div class="form-group">
                             <div class="label-row">
-                                <label for="interestInput" class="form-label">Oprocentowanie</label>
-                                <span class="label-hint">w skali roku</span>
+                                <label for="interestInput" class="form-label" id="labelInterest">Oprocentowanie</label>
+                                <span class="label-hint" id="hintInterest">w skali roku</span>
                             </div>
                             <div class="input-affix-wrap">
                                 <input type="number" id="interestInput" class="form-input font-bold" min="0" max="25" step="0.1" value="8.5" required>
@@ -175,8 +178,8 @@
                         <!-- Prowizja -->
                         <div class="form-group">
                             <div class="label-row">
-                                <label for="commissionInput" class="form-label">Prowizja banku</label>
-                                <span class="label-hint">jednorazowa</span>
+                                <label for="commissionInput" class="form-label" id="labelCommission">Prowizja banku</label>
+                                <span class="label-hint" id="hintCommission">jednorazowa</span>
                             </div>
                             <div class="input-affix-wrap">
                                 <input type="number" id="commissionInput" class="form-input font-bold" min="0" max="15" step="0.1" value="0">
@@ -189,7 +192,7 @@
                     <!-- Sposób rozliczenia prowizji (widoczne tylko gdy prowizja > 0) -->
                     <div class="form-group animate-fade-in" id="commissionPaymentGroup" style="display: none;">
                         <div class="label-row">
-                            <label class="form-label">Sposób płatności prowizji</label>
+                            <label class="form-label" id="labelCommPayment">Sposób płatności prowizji</label>
                             <span class="label-hint" id="commissionAmountBadge">0,00 zł</span>
                         </div>
                         <div class="segmented-control pill-control" role="radiogroup" aria-label="Sposób płatności prowizji">
@@ -233,7 +236,7 @@
                     <div class="card-step-badge card-step-badge--accent">2</div>
                     <div>
                         <h2 id="resultsHeading" class="card-title">Podsumowanie finansowe</h2>
-                        <p class="card-description">Miesięczna rata oraz pełna kalkulacja spłaty kapitału i odsetek</p>
+                        <p class="card-description" id="resultsDesc">Miesięczna rata oraz pełna kalkulacja spłaty kapitału i odsetek</p>
                     </div>
                 </div>
 
@@ -258,7 +261,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="metric-title">Całkowita spłata</span>
+                            <span class="metric-title" id="metricTotalRepayment">Całkowita spłata</span>
                             <div class="metric-value font-bold" id="totalRepayment">0,00 zł</div>
                         </div>
                     </div>
@@ -272,7 +275,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="metric-title">Całkowity koszt</span>
+                            <span class="metric-title" id="metricTotalCost">Całkowity koszt</span>
                             <div class="metric-value font-bold text-accent" id="totalCost">0,00 zł</div>
                         </div>
                     </div>
@@ -284,7 +287,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="metric-title">Kwota kapitału</span>
+                            <span class="metric-title" id="metricPrincipal">Kwota kapitału</span>
                             <div class="metric-value font-bold" id="principalAmount">0,00 zł</div>
                             <span class="metric-subtitle" id="principalSubtext">Kwota do dyspozycji</span>
                         </div>
@@ -297,7 +300,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="metric-title">Prowizja banku</span>
+                            <span class="metric-title" id="metricCommission">Prowizja banku</span>
                             <div class="metric-value font-bold" id="commissionCost">0,00 zł</div>
                             <span class="metric-subtitle" id="commissionPaymentLabel">Opłacona z góry</span>
                         </div>
@@ -307,7 +310,7 @@
                 <!-- Visual Breakdown Bar -->
                 <div class="breakdown-wrap">
                     <div class="breakdown-header">
-                        <span class="breakdown-title">Struktura całkowitej spłaty</span>
+                        <span class="breakdown-title" id="breakdownTitle">Struktura całkowitej spłaty</span>
                     </div>
                     <div class="breakdown-bar" role="progressbar" aria-label="Struktura kosztów kredytu">
                         <div class="bar-segment bar-principal" id="barPrincipal" style="width: 70%"></div>
@@ -317,17 +320,17 @@
                     <div class="breakdown-legend">
                         <div class="legend-item">
                             <span class="dot dot-principal"></span>
-                            <span class="legend-name">Kapitał:</span>
+                            <span class="legend-name" id="legendPrincipalLabel">Kapitał:</span>
                             <span class="legend-val" id="legendPrincipalVal">0 zł</span>
                         </div>
                         <div class="legend-item">
                             <span class="dot dot-interest"></span>
-                            <span class="legend-name">Odsetki:</span>
+                            <span class="legend-name" id="legendInterestLabel">Odsetki:</span>
                             <span class="legend-val" id="legendInterestVal">0 zł</span>
                         </div>
                         <div class="legend-item">
                             <span class="dot dot-commission"></span>
-                            <span class="legend-name">Prowizja:</span>
+                            <span class="legend-name" id="legendCommissionLabel">Prowizja:</span>
                             <span class="legend-val" id="legendCommissionVal">0 zł</span>
                         </div>
                     </div>
@@ -337,7 +340,7 @@
                 <div class="schedule-section">
                     <div class="schedule-header">
                         <div>
-                            <h3 class="schedule-title">Harmonogram rat</h3>
+                            <h3 class="schedule-title" id="scheduleTitle">Harmonogram rat</h3>
                             <span class="schedule-count text-muted" id="scheduleRowsCount">(60 rat)</span>
                         </div>
                         <button type="button" class="btn btn-outline btn-sm" id="toggleScheduleBtn" aria-expanded="false">
@@ -383,7 +386,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu ustala bank.</p>
+            <p id="footerText">Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu ustala bank.</p>
         </footer>
     </div>
 

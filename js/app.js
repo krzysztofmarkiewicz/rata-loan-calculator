@@ -1,9 +1,284 @@
 /**
- * Kalkulator Kredytowy — Główny skrypt aplikacji
- * Obsługa motywów, obliczeń finansowych w czasie rzeczywistym oraz interakcji UI.
+ * Kalkulator Kredytowy / Loan Calculator — Główny skrypt aplikacji
+ * Obsługa motywów, i18n (PL/EN), obliczeń finansowych oraz interakcji UI.
  */
 
 'use strict';
+
+// =============================================================================
+// 0. Moduł Językowy (i18n)
+// =============================================================================
+const i18n = (() => {
+    const STORAGE_KEY = 'toolbox_lang';
+
+    const translations = {
+        pl: {
+            // <head>
+            pageTitle:              'Kalkulator Kredytowy | Precyzyjna Symulacja Finansowa',
+            pageDesc:               'Nowoczesny kalkulator kredytowy: raty równe i malejące, harmonogram spłat, symulacja całkowitych kosztów i struktura spłaty.',
+
+            // Header
+            brandTitle:             'Kalkulator Kredytowy',
+            brandSubtitle:          'Precyzyjna symulacja rat, kosztów oraz harmonogramu spłat',
+            printTitle:             'Drukuj symulację',
+            themeToggleLabel:       (isDark) => isDark ? 'Przełącz na jasny motyw' : 'Przełącz na ciemny motyw',
+            langToggleLabel:        'Switch to English',
+
+            // Form card
+            formStep:               '1',
+            formTitle:              'Parametry kredytu',
+            formDesc:               'Wprowadź warunki finansowania lub wybierz gotowe wartości',
+
+            // Installment type
+            labelInstallmentType:   'Rodzaj rat',
+            tabStable:              'Raty równe',
+            tabStableBadge:         'Popularne',
+            tabDecreasing:          'Raty malejące',
+            tabDecreasingBadge:     'Niższy koszt',
+
+            // Amount
+            labelAmount:            'Kwota kredytu',
+            hintAmount:             'PLN',
+            suffixAmount:           'zł',
+            chip30k:                '30 tys.',
+            chip50k:                '50 tys.',
+            chip100k:               '100 tys.',
+            chip300k:               '300 tys.',
+            chip500k:               '500 tys.',
+
+            // Period
+            labelPeriod:            'Okres kredytowania',
+            unitYears:              'Lata',
+            unitMonths:             'Miesiące',
+            suffixYears:            'lat',
+            suffixMonths:           'mies.',
+            chipPeriod1:            '1 rok',
+            chipPeriod3:            '3 lata',
+            chipPeriod5:            '5 lat',
+            chipPeriod10:           '10 lat',
+            chipPeriod25:           '25 lat',
+            chipPeriod30:           '30 lat',
+
+            // Interest & Commission
+            labelInterest:          'Oprocentowanie',
+            hintInterest:           'w skali roku',
+            labelCommission:        'Prowizja banku',
+            hintCommission:         'jednorazowa',
+
+            // Commission payment
+            labelCommPayment:       'Sposób płatności prowizji',
+            commUpfront:            'Opłacona z góry',
+            commUpfrontBadge:       'Niższe raty',
+            commFinanced:           'Doliczona do kredytu',
+            commFinancedBadge:      'W ratach',
+            commHintUpfront:        'Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu odsetek.',
+            commHintFinanced:       'Prowizja doliczona do kwoty kredytu i spłacana w ratach — powiększa miesięczną ratę oraz całkowity koszt odsetek.',
+
+            // Actions
+            computeBtn:             'Przelicz raty',
+            resetBtn:               'Domyślne',
+
+            // Results card
+            resultsStep:            '2',
+            resultsTitle:           'Podsumowanie finansowe',
+            resultsDesc:            'Miesięczna rata oraz pełna kalkulacja spłaty kapitału i odsetek',
+
+            // Hero
+            heroLabelStable:        'Miesięczna rata (stała)',
+            heroLabelDecreasing:    'Pierwsza rata (malejąca)',
+            heroSubtextDefault:     'Kalkulacja w czasie rzeczywistym',
+
+            // Metrics
+            metricTotalRepayment:   'Całkowita spłata',
+            metricTotalCost:        'Całkowity koszt',
+            metricPrincipal:        'Kwota kapitału',
+            metricPrincipalSub:     'Kwota do dyspozycji',
+            metricCommission:       'Prowizja banku',
+
+            // Breakdown bar
+            breakdownTitle:         'Struktura całkowitej spłaty',
+            breakdownAriaLabel:     'Struktura kosztów kredytu',
+            legendPrincipal:        'Kapitał:',
+            legendInterest:         'Odsetki:',
+            legendCommission:       'Prowizja:',
+
+            // Schedule
+            scheduleTitle:          'Harmonogram rat',
+            scheduleCountFn:        (n) => `(${n} rat)`,
+            showSchedule:           'Pokaż pełny harmonogram',
+            hideSchedule:           'Zwiń harmonogram',
+            thNr:                   'Nr raty',
+            thInstallment:          'Rata całkowita',
+            thPrincipal:            'Część kapitałowa',
+            thInterest:             'Część odsetkowa',
+            thRemaining:            'Pozostały kapitał',
+
+            // Actions
+            copySummaryBtn:         'Kopiuj podsumowanie do schowka',
+            toastCopied:            '✓ Podsumowanie skopiowane do schowka!',
+            toastReset:             'Przywrócono parametry domyślne',
+
+            // Commission labels in results
+            commLabelUpfront:       'Opłacona z góry',
+            commLabelFinanced:      'Doliczona do kredytu',
+            commLabelNone:          'Brak prowizji',
+            commLabelPrincipalSub:  (amount, fmt) => `Skredytowano: ${fmt(amount)}`,
+
+            // Dynamic subtexts
+            heroSubStable:          (months, commLabel) => commLabel
+                ? `Stała kwota przez ${months} miesięcy · Prowizja ${commLabel.toLowerCase()}`
+                : `Stała kwota przez cały okres ${months} miesięcy`,
+            heroSubDecreasing:      (lastInst, commLabel, fmt) => commLabel
+                ? `Ostatnia rata: ${fmt(lastInst)} · Prowizja ${commLabel.toLowerCase()}`
+                : `Ostatnia rata: ${fmt(lastInst)} · Rata maleje co miesiąc`,
+
+            // Copy text template
+            copyTemplate:           (r, fmt) => {
+                const typeName     = r.type === 'stable' ? 'Raty równe (annuitetowe)' : 'Raty malejące';
+                const commTypeDesc = r.commissionPayment === 'upfront' ? 'Opłacona z góry (środki własne)' : 'Doliczona do kredytu (w ratach)';
+                const rateLine     = r.type === 'stable'
+                    ? `Miesięczna rata:          ${fmt(r.firstInstallment)}`
+                    : `Pierwsza rata:            ${fmt(r.firstInstallment)}\nOstatnia rata:            ${fmt(r.lastInstallment)}`;
+                return `📊 SYMULACJA KREDYTU — KALKULATOR\n---------------------------------------------\nKwota kredytu:          ${fmt(r.principal)}\nOkres spłaty:           ${r.period} ${r.unit === 'years' ? 'lat' : 'miesięcy'} (${r.months} rat)\nOprocentowanie:         ${r.interestPercent.toFixed(2)}%\nProwizja banku:         ${r.commissionPercent.toFixed(2)}% (${fmt(r.commissionAmount)}) [${commTypeDesc}]\nSystem spłaty:          ${typeName}\n---------------------------------------------\n${rateLine}\nCałkowita kwota spłaty: ${fmt(r.totalRepaid)}\nCałkowity koszt:        ${fmt(r.totalCost)} (w tym odsetki: ${fmt(r.totalInterest)})\n---------------------------------------------\nWygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
+            },
+
+            // Footer
+            footerText:             'Kalkulator ma charakter wyłącznie informacyjny i poglądowy. Rzeczywiste warunki kredytu ustala bank.',
+        },
+
+        en: {
+            pageTitle:              'Loan Calculator | Precise Financial Simulation',
+            pageDesc:               'Modern loan calculator: fixed & decreasing installments, repayment schedule, total cost simulation and payment breakdown.',
+
+            brandTitle:             'Loan Calculator',
+            brandSubtitle:          'Precise simulation of installments, costs and repayment schedule',
+            printTitle:             'Print simulation',
+            themeToggleLabel:       (isDark) => isDark ? 'Switch to light mode' : 'Switch to dark mode',
+            langToggleLabel:        'Przełącz na polski',
+
+            formStep:               '1',
+            formTitle:              'Loan Parameters',
+            formDesc:               'Enter your financing conditions or choose preset values',
+
+            labelInstallmentType:   'Installment type',
+            tabStable:              'Fixed installments',
+            tabStableBadge:         'Popular',
+            tabDecreasing:          'Decreasing installments',
+            tabDecreasingBadge:     'Lower cost',
+
+            labelAmount:            'Loan amount',
+            hintAmount:             'PLN',
+            suffixAmount:           'PLN',
+            chip30k:                '30k',
+            chip50k:                '50k',
+            chip100k:               '100k',
+            chip300k:               '300k',
+            chip500k:               '500k',
+
+            labelPeriod:            'Loan term',
+            unitYears:              'Years',
+            unitMonths:             'Months',
+            suffixYears:            'yrs',
+            suffixMonths:           'mo.',
+            chipPeriod1:            '1 yr',
+            chipPeriod3:            '3 yrs',
+            chipPeriod5:            '5 yrs',
+            chipPeriod10:           '10 yrs',
+            chipPeriod25:           '25 yrs',
+            chipPeriod30:           '30 yrs',
+
+            labelInterest:          'Interest rate',
+            hintInterest:           'per year',
+            labelCommission:        'Bank commission',
+            hintCommission:         'one-time',
+
+            labelCommPayment:       'Commission payment method',
+            commUpfront:            'Paid upfront',
+            commUpfrontBadge:       'Lower installments',
+            commFinanced:           'Added to loan',
+            commFinancedBadge:      'In installments',
+            commHintUpfront:        'Commission paid once at loan disbursement — does not increase installments or interest cost.',
+            commHintFinanced:       'Commission added to the loan amount and repaid in installments — increases monthly payment and total interest cost.',
+
+            computeBtn:             'Calculate',
+            resetBtn:               'Reset',
+
+            resultsStep:            '2',
+            resultsTitle:           'Financial Summary',
+            resultsDesc:            'Monthly installment and full breakdown of principal and interest repayment',
+
+            heroLabelStable:        'Monthly installment (fixed)',
+            heroLabelDecreasing:    'First installment (decreasing)',
+            heroSubtextDefault:     'Real-time calculation',
+
+            metricTotalRepayment:   'Total repayment',
+            metricTotalCost:        'Total cost',
+            metricPrincipal:        'Principal amount',
+            metricPrincipalSub:     'Available to you',
+            metricCommission:       'Bank commission',
+
+            breakdownTitle:         'Total repayment structure',
+            breakdownAriaLabel:     'Loan cost structure',
+            legendPrincipal:        'Principal:',
+            legendInterest:         'Interest:',
+            legendCommission:       'Commission:',
+
+            scheduleTitle:          'Repayment schedule',
+            scheduleCountFn:        (n) => `(${n} installments)`,
+            showSchedule:           'Show full schedule',
+            hideSchedule:           'Collapse schedule',
+            thNr:                   'No.',
+            thInstallment:          'Total installment',
+            thPrincipal:            'Principal part',
+            thInterest:             'Interest part',
+            thRemaining:            'Remaining balance',
+
+            copySummaryBtn:         'Copy summary to clipboard',
+            toastCopied:            '✓ Summary copied to clipboard!',
+            toastReset:             'Parameters reset to defaults',
+
+            commLabelUpfront:       'Paid upfront',
+            commLabelFinanced:      'Added to loan',
+            commLabelNone:          'No commission',
+            commLabelPrincipalSub:  (amount, fmt) => `Financed: ${fmt(amount)}`,
+
+            heroSubStable:          (months, commLabel) => commLabel
+                ? `Fixed amount for ${months} months · Commission ${commLabel.toLowerCase()}`
+                : `Fixed amount for the entire ${months}-month period`,
+            heroSubDecreasing:      (lastInst, commLabel, fmt) => commLabel
+                ? `Last installment: ${fmt(lastInst)} · Commission ${commLabel.toLowerCase()}`
+                : `Last installment: ${fmt(lastInst)} · Decreases each month`,
+
+            copyTemplate:           (r, fmt) => {
+                const typeName     = r.type === 'stable' ? 'Fixed installments (annuity)' : 'Decreasing installments';
+                const commTypeDesc = r.commissionPayment === 'upfront' ? 'Paid upfront (own funds)' : 'Added to loan (in installments)';
+                const rateLine     = r.type === 'stable'
+                    ? `Monthly installment:      ${fmt(r.firstInstallment)}`
+                    : `First installment:        ${fmt(r.firstInstallment)}\nLast installment:         ${fmt(r.lastInstallment)}`;
+                return `📊 LOAN SIMULATION — CALCULATOR\n---------------------------------------------\nLoan amount:             ${fmt(r.principal)}\nLoan term:               ${r.period} ${r.unit === 'years' ? 'years' : 'months'} (${r.months} installments)\nInterest rate:           ${r.interestPercent.toFixed(2)}%\nBank commission:         ${r.commissionPercent.toFixed(2)}% (${fmt(r.commissionAmount)}) [${commTypeDesc}]\nRepayment system:        ${typeName}\n---------------------------------------------\n${rateLine}\nTotal repayment:         ${fmt(r.totalRepaid)}\nTotal cost:              ${fmt(r.totalCost)} (interest: ${fmt(r.totalInterest)})\n---------------------------------------------\nGenerated by: Loan Calculator`;
+            },
+
+            footerText:             'This calculator is for informational and illustrative purposes only. Actual loan terms are determined by the bank.',
+        }
+    };
+
+    let currentLang = localStorage.getItem(STORAGE_KEY) || 'pl';
+
+    function t(key, ...args) {
+        const entry = translations[currentLang][key];
+        if (typeof entry === 'function') return entry(...args);
+        return entry ?? key;
+    }
+
+    function getLang() { return currentLang; }
+
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem(STORAGE_KEY, lang);
+    }
+
+    return { t, getLang, setLang, translations };
+})();
 
 // =============================================================================
 // 1. Moduł Motywu (Light / Dark Mode)
@@ -15,17 +290,14 @@ const ThemeManager = (() => {
 
     function getPreferredTheme() {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved === 'dark' || saved === 'light') {
-            return saved;
-        }
+        if (saved === 'dark' || saved === 'light') return saved;
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 
     function applyTheme(theme) {
         root.setAttribute('data-theme', theme);
         if (toggleBtn) {
-            const isDark = theme === 'dark';
-            const label = isDark ? 'Przełącz na jasny motyw' : 'Przełącz na ciemny motyw';
+            const label = i18n.t('themeToggleLabel', theme === 'dark');
             toggleBtn.setAttribute('aria-label', label);
             toggleBtn.setAttribute('title', label);
         }
@@ -51,16 +323,17 @@ const ThemeManager = (() => {
         });
     }
 
-    return { init, applyTheme, getPreferredTheme };
+    function refreshLabels() {
+        applyTheme(root.getAttribute('data-theme') || 'light');
+    }
+
+    return { init, applyTheme, getPreferredTheme, refreshLabels };
 })();
 
 // =============================================================================
 // 2. Silnik Finansowy (Loan Engine)
 // =============================================================================
 const LoanEngine = (() => {
-    /**
-     * Oblicza harmonogram i podsumowanie dla rat równych (annuitetowych)
-     */
     function calculateAnnuity(principal, annualRate, months) {
         const monthlyRate = annualRate / 12;
         let monthlyInstallment = 0;
@@ -80,28 +353,12 @@ const LoanEngine = (() => {
             const interestPart = remaining * monthlyRate;
             const principalPart = monthlyInstallment - interestPart;
             remaining = Math.max(0, remaining - principalPart);
-
-            schedule.push({
-                month: m,
-                installment: monthlyInstallment,
-                principal: principalPart,
-                interest: interestPart,
-                remaining: remaining
-            });
+            schedule.push({ month: m, installment: monthlyInstallment, principal: principalPart, interest: interestPart, remaining });
         }
 
-        return {
-            firstInstallment: monthlyInstallment,
-            lastInstallment: monthlyInstallment,
-            totalRepaid,
-            totalInterest,
-            schedule
-        };
+        return { firstInstallment: monthlyInstallment, lastInstallment: monthlyInstallment, totalRepaid, totalInterest, schedule };
     }
 
-    /**
-     * Oblicza harmonogram i podsumowanie dla rat malejących
-     */
     function calculateDecreasing(principal, annualRate, months) {
         const monthlyRate = annualRate / 12;
         const fixedPrincipalPart = principal / months;
@@ -122,23 +379,10 @@ const LoanEngine = (() => {
 
             totalRepaid += installment;
             totalInterest += interestPart;
-
-            schedule.push({
-                month: m,
-                installment: installment,
-                principal: fixedPrincipalPart,
-                interest: interestPart,
-                remaining: remaining
-            });
+            schedule.push({ month: m, installment, principal: fixedPrincipalPart, interest: interestPart, remaining });
         }
 
-        return {
-            firstInstallment,
-            lastInstallment,
-            totalRepaid,
-            totalInterest,
-            schedule
-        };
+        return { firstInstallment, lastInstallment, totalRepaid, totalInterest, schedule };
     }
 
     return { calculateAnnuity, calculateDecreasing };
@@ -148,92 +392,272 @@ const LoanEngine = (() => {
 // 3. Kontroler Aplikacji i Interfejs Użytkownika (App Controller)
 // =============================================================================
 const LoanApp = (() => {
-    // Formatowania walut i liczb
     const currencyFormatter = new Intl.NumberFormat('pl-PL', {
-        style: 'currency',
-        currency: 'PLN',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        style: 'currency', currency: 'PLN',
+        minimumFractionDigits: 2, maximumFractionDigits: 2
     });
 
-    const percentFormatter = new Intl.NumberFormat('pl-PL', {
-        maximumFractionDigits: 1
-    });
+    const percentFormatter = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 });
 
-    // Stan aplikacji
     const state = {
         amount: 100000,
         period: 5,
-        unit: 'years',                  // 'years' | 'months'
+        unit: 'years',
         interest: 8.5,
         commission: 0,
-        commissionPayment: 'upfront',   // 'upfront' (opłacona z góry) | 'financed' (doliczona do kredytu)
-        type: 'stable',                 // 'stable' | 'decreasing'
+        commissionPayment: 'upfront',
+        type: 'stable',
         lastResult: null
     };
 
-    // Referencje DOM
     let elements = {};
 
     function cacheDOM() {
         elements = {
-            form: document.getElementById('loanForm'),
-            amountInput: document.getElementById('amountInput'),
-            amountSlider: document.getElementById('amountSlider'),
-            installmentsInput: document.getElementById('installmentsInput'),
-            installmentsSlider: document.getElementById('installmentsSlider'),
-            unitYears: document.getElementById('unitYears'),
-            unitMonths: document.getElementById('unitMonths'),
-            unitSuffix: document.getElementById('unitSuffix'),
-            interestInput: document.getElementById('interestInput'),
-            interestSlider: document.getElementById('interestSlider'),
-            commissionInput: document.getElementById('commissionInput'),
-            commissionSlider: document.getElementById('commissionSlider'),
-            
-            // Opcje prowizji
+            form:                   document.getElementById('loanForm'),
+            amountInput:            document.getElementById('amountInput'),
+            amountSlider:           document.getElementById('amountSlider'),
+            installmentsInput:      document.getElementById('installmentsInput'),
+            installmentsSlider:     document.getElementById('installmentsSlider'),
+            unitYears:              document.getElementById('unitYears'),
+            unitMonths:             document.getElementById('unitMonths'),
+            unitSuffix:             document.getElementById('unitSuffix'),
+            interestInput:          document.getElementById('interestInput'),
+            interestSlider:         document.getElementById('interestSlider'),
+            commissionInput:        document.getElementById('commissionInput'),
+            commissionSlider:       document.getElementById('commissionSlider'),
+
             commissionPaymentGroup: document.getElementById('commissionPaymentGroup'),
-            commUpfrontBtn: document.getElementById('commUpfrontBtn'),
-            commFinancedBtn: document.getElementById('commFinancedBtn'),
-            commissionAmountBadge: document.getElementById('commissionAmountBadge'),
-            commissionHint: document.getElementById('commissionHint'),
+            commUpfrontBtn:         document.getElementById('commUpfrontBtn'),
+            commFinancedBtn:        document.getElementById('commFinancedBtn'),
+            commissionAmountBadge:  document.getElementById('commissionAmountBadge'),
+            commissionHint:         document.getElementById('commissionHint'),
             commissionPaymentLabel: document.getElementById('commissionPaymentLabel'),
-            principalSubtext: document.getElementById('principalSubtext'),
+            principalSubtext:       document.getElementById('principalSubtext'),
 
-            tabStable: document.getElementById('tabStable'),
-            tabDecreasing: document.getElementById('tabDecreasing'),
-            resetBtn: document.getElementById('resetBtn'),
+            tabStable:              document.getElementById('tabStable'),
+            tabDecreasing:          document.getElementById('tabDecreasing'),
+            resetBtn:               document.getElementById('resetBtn'),
 
-            // Wyniki
-            heroInstallmentLabel: document.getElementById('heroInstallmentLabel'),
-            heroInstallmentValue: document.getElementById('heroInstallmentValue'),
+            heroInstallmentLabel:   document.getElementById('heroInstallmentLabel'),
+            heroInstallmentValue:   document.getElementById('heroInstallmentValue'),
             heroInstallmentSubtext: document.getElementById('heroInstallmentSubtext'),
-            totalRepayment: document.getElementById('totalRepayment'),
-            totalCost: document.getElementById('totalCost'),
-            principalAmount: document.getElementById('principalAmount'),
-            commissionCost: document.getElementById('commissionCost'),
+            totalRepayment:         document.getElementById('totalRepayment'),
+            totalCost:              document.getElementById('totalCost'),
+            principalAmount:        document.getElementById('principalAmount'),
+            commissionCost:         document.getElementById('commissionCost'),
 
-            // Pasek podziału
-            barPrincipal: document.getElementById('barPrincipal'),
-            barInterest: document.getElementById('barInterest'),
-            barCommission: document.getElementById('barCommission'),
-            legendPrincipalVal: document.getElementById('legendPrincipalVal'),
-            legendInterestVal: document.getElementById('legendInterestVal'),
-            legendCommissionVal: document.getElementById('legendCommissionVal'),
+            barPrincipal:           document.getElementById('barPrincipal'),
+            barInterest:            document.getElementById('barInterest'),
+            barCommission:          document.getElementById('barCommission'),
+            legendPrincipalVal:     document.getElementById('legendPrincipalVal'),
+            legendInterestVal:      document.getElementById('legendInterestVal'),
+            legendCommissionVal:    document.getElementById('legendCommissionVal'),
 
-            // Tabela
-            scheduleTableBody: document.getElementById('scheduleTableBody'),
-            toggleScheduleBtn: document.getElementById('toggleScheduleBtn'),
-            scheduleContainer: document.getElementById('scheduleContainer'),
-            scheduleRowsCount: document.getElementById('scheduleRowsCount'),
+            scheduleTableBody:      document.getElementById('scheduleTableBody'),
+            toggleScheduleBtn:      document.getElementById('toggleScheduleBtn'),
+            scheduleContainer:      document.getElementById('scheduleContainer'),
+            scheduleRowsCount:      document.getElementById('scheduleRowsCount'),
 
-            // Akcje
-            copySummaryBtn: document.getElementById('copySummaryBtn'),
-            printBtn: document.getElementById('printBtn'),
-            toast: document.getElementById('toast'),
-            resultsSection: document.getElementById('resultsSection')
+            copySummaryBtn:         document.getElementById('copySummaryBtn'),
+            printBtn:               document.getElementById('printBtn'),
+            langToggleBtn:          document.getElementById('langToggleBtn'),
+            toast:                  document.getElementById('toast'),
+            resultsSection:         document.getElementById('resultsSection')
         };
     }
 
+    // -------------------------------------------------------------------------
+    // DOM i18n helpers
+    // -------------------------------------------------------------------------
+    function setText(id, key) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = i18n.t(key);
+    }
+
+    function setAttr(id, attr, key) {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute(attr, i18n.t(key));
+    }
+
+    /**
+     * Aktualizuje wszystkie statyczne teksty w DOM zgodnie z bieżącym językiem.
+     */
+    function applyTranslations() {
+        const t = (k, ...a) => i18n.t(k, ...a);
+
+        // <html lang>
+        document.documentElement.lang = i18n.getLang();
+
+        // <title> & meta description
+        document.title = t('pageTitle');
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', t('pageDesc'));
+
+        // Header
+        setText('brandTitle', 'brandTitle');
+        setText('brandSubtitle', 'brandSubtitle');
+
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.setAttribute('title', t('printTitle'));
+            printBtn.setAttribute('aria-label', t('printTitle'));
+        }
+
+        // Lang button label
+        if (elements.langToggleBtn) {
+            elements.langToggleBtn.setAttribute('title', t('langToggleLabel'));
+            elements.langToggleBtn.setAttribute('aria-label', t('langToggleLabel'));
+            elements.langToggleBtn.textContent = i18n.getLang() === 'pl' ? 'EN' : 'PL';
+        }
+
+        // Theme labels
+        ThemeManager.refreshLabels();
+
+        // Form card header
+        setText('formHeading', 'formTitle');
+        setText('formDesc', 'formDesc');
+
+        // Installment type tabs
+        const tabStable = document.getElementById('tabStable');
+        if (tabStable) {
+            tabStable.querySelector('.tab-title').textContent = t('tabStable');
+            tabStable.querySelector('.tab-badge').textContent = t('tabStableBadge');
+        }
+        const tabDecreasing = document.getElementById('tabDecreasing');
+        if (tabDecreasing) {
+            tabDecreasing.querySelector('.tab-title').textContent = t('tabDecreasing');
+            tabDecreasing.querySelector('.tab-badge').textContent = t('tabDecreasingBadge');
+        }
+
+        // Amount
+        setText('labelAmount', 'labelAmount');
+        setText('hintAmount', 'hintAmount');
+        setText('suffixAmount', 'suffixAmount');
+        setText('chip30k', 'chip30k');
+        setText('chip50k', 'chip50k');
+        setText('chip100k', 'chip100k');
+        setText('chip300k', 'chip300k');
+        setText('chip500k', 'chip500k');
+
+        // Period
+        setText('labelPeriod', 'labelPeriod');
+        setText('unitYearsBtn', 'unitYears');
+        setText('unitMonthsBtn', 'unitMonths');
+        // suffix updated by setUnit / updateInstallmentsSliderLimits
+        updateUnitSuffix();
+
+        // Period chips
+        setText('chipPeriod1', 'chipPeriod1');
+        setText('chipPeriod3', 'chipPeriod3');
+        setText('chipPeriod5', 'chipPeriod5');
+        setText('chipPeriod10', 'chipPeriod10');
+        setText('chipPeriod25', 'chipPeriod25');
+        setText('chipPeriod30', 'chipPeriod30');
+
+        // Interest & Commission
+        setText('labelInterest', 'labelInterest');
+        setText('hintInterest', 'hintInterest');
+        setText('labelCommission', 'labelCommission');
+        setText('hintCommission', 'hintCommission');
+
+        // Commission payment
+        setText('labelCommPayment', 'labelCommPayment');
+        const commUpfrontBtn = document.getElementById('commUpfrontBtn');
+        if (commUpfrontBtn) {
+            commUpfrontBtn.querySelector('.tab-title').textContent = t('commUpfront');
+            commUpfrontBtn.querySelector('.tab-badge').textContent = t('commUpfrontBadge');
+        }
+        const commFinancedBtn = document.getElementById('commFinancedBtn');
+        if (commFinancedBtn) {
+            commFinancedBtn.querySelector('.tab-title').textContent = t('commFinanced');
+            commFinancedBtn.querySelector('.tab-badge').textContent = t('commFinancedBadge');
+        }
+        // hint updated by setCommissionPayment
+        if (elements.commissionHint) {
+            const isUpfront = state.commissionPayment === 'upfront';
+            elements.commissionHint.textContent = t(isUpfront ? 'commHintUpfront' : 'commHintFinanced');
+        }
+
+        // Actions
+        const computeBtn = document.getElementById('computeBtn');
+        if (computeBtn) computeBtn.querySelector('span').textContent = t('computeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) resetBtn.querySelector('span').textContent = t('resetBtn');
+
+        // Results card header
+        setText('resultsHeading', 'resultsTitle');
+        setText('resultsDesc', 'resultsDesc');
+
+        // Hero (default)
+        if (elements.heroInstallmentSubtext && !state.lastResult) {
+            elements.heroInstallmentSubtext.textContent = t('heroSubtextDefault');
+        }
+
+        // Metrics titles
+        setText('metricTotalRepayment', 'metricTotalRepayment');
+        setText('metricTotalCost', 'metricTotalCost');
+        setText('metricPrincipal', 'metricPrincipal');
+        setText('metricCommission', 'metricCommission');
+
+        // Breakdown
+        setText('breakdownTitle', 'breakdownTitle');
+        const breakdownBar = document.querySelector('.breakdown-bar');
+        if (breakdownBar) breakdownBar.setAttribute('aria-label', t('breakdownAriaLabel'));
+        setText('legendPrincipalLabel', 'legendPrincipal');
+        setText('legendInterestLabel', 'legendInterest');
+        setText('legendCommissionLabel', 'legendCommission');
+
+        // Schedule
+        setText('scheduleTitle', 'scheduleTitle');
+        // Update table headers
+        const ths = document.querySelectorAll('.schedule-table thead th');
+        if (ths.length === 5) {
+            ths[0].textContent = t('thNr');
+            ths[1].textContent = t('thInstallment');
+            ths[2].textContent = t('thPrincipal');
+            ths[3].textContent = t('thInterest');
+            ths[4].textContent = t('thRemaining');
+        }
+        // Update toggle btn label
+        if (elements.toggleScheduleBtn) {
+            const isCollapsed = elements.scheduleContainer && elements.scheduleContainer.classList.contains('collapsed');
+            updateToggleScheduleLabel(isCollapsed !== false);
+        }
+
+        // Copy btn
+        const copySummaryBtn = document.getElementById('copySummaryBtn');
+        if (copySummaryBtn) copySummaryBtn.querySelector('span').textContent = t('copySummaryBtn');
+
+        // Footer
+        setText('footerText', 'footerText');
+
+        // Re-render dynamic results if available
+        if (state.lastResult) {
+            renderResults(state.lastResult);
+        }
+    }
+
+    function updateUnitSuffix() {
+        if (elements.unitSuffix) {
+            elements.unitSuffix.textContent = state.unit === 'years'
+                ? i18n.t('suffixYears')
+                : i18n.t('suffixMonths');
+        }
+    }
+
+    function updateToggleScheduleLabel(isCollapsed) {
+        if (!elements.toggleScheduleBtn) return;
+        const label = isCollapsed ? i18n.t('showSchedule') : i18n.t('hideSchedule');
+        const chevronCollapsed = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+        const chevronExpanded  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+        elements.toggleScheduleBtn.innerHTML = `${isCollapsed ? chevronCollapsed : chevronExpanded}<span>${label}</span>`;
+        elements.toggleScheduleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+    }
+
+    // -------------------------------------------------------------------------
+    // Slider helpers
+    // -------------------------------------------------------------------------
     function updateSliderFill(slider) {
         if (!slider) return;
         const min = Number(slider.min) || 0;
@@ -250,15 +674,14 @@ const LoanApp = (() => {
             elements.installmentsSlider.step = '1';
             elements.installmentsInput.min = '1';
             elements.installmentsInput.max = '35';
-            elements.unitSuffix.textContent = 'lat';
         } else {
             elements.installmentsSlider.min = '3';
             elements.installmentsSlider.max = '420';
             elements.installmentsSlider.step = '1';
             elements.installmentsInput.min = '3';
             elements.installmentsInput.max = '420';
-            elements.unitSuffix.textContent = 'mies.';
         }
+        updateUnitSuffix();
     }
 
     function setUnit(newUnit) {
@@ -311,26 +734,26 @@ const LoanApp = (() => {
         }
 
         if (elements.commissionHint) {
-            elements.commissionHint.textContent = isUpfront
-                ? 'Prowizja płatna jednorazowo przy uruchomieniu kredytu — nie powiększa rat ani kosztu odsetek.'
-                : 'Prowizja doliczona do kwoty kredytu i spłacana w ratach — powiększa miesięczną ratę oraz całkowity koszt odsetek.';
+            elements.commissionHint.textContent = i18n.t(isUpfront ? 'commHintUpfront' : 'commHintFinanced');
         }
 
         calculate();
     }
 
+    // -------------------------------------------------------------------------
+    // Calculations
+    // -------------------------------------------------------------------------
     function calculate() {
-        const principal = parseFloat(elements.amountInput.value) || 0;
-        let period = parseInt(elements.installmentsInput.value, 10) || 1;
-        const interestRate = (parseFloat(elements.interestInput.value) || 0) / 100;
+        const principal      = parseFloat(elements.amountInput.value) || 0;
+        let period           = parseInt(elements.installmentsInput.value, 10) || 1;
+        const interestRate   = (parseFloat(elements.interestInput.value) || 0) / 100;
         const commissionRate = (parseFloat(elements.commissionInput.value) || 0) / 100;
 
         if (principal <= 0 || period <= 0) return;
 
-        const months = state.unit === 'years' ? period * 12 : period;
+        const months           = state.unit === 'years' ? period * 12 : period;
         const commissionAmount = principal * commissionRate;
 
-        // Aktualizacja kwoty prowizji w formularzu oraz widoczności sekcji
         const hasCommission = commissionAmount > 0;
         if (elements.commissionAmountBadge) {
             elements.commissionAmountBadge.textContent = currencyFormatter.format(commissionAmount);
@@ -339,16 +762,15 @@ const LoanApp = (() => {
             elements.commissionPaymentGroup.style.display = hasCommission ? 'flex' : 'none';
         }
 
-        // Kwota finansowana w ratach zależnie od wybranego sposobu płatności
         let financedAmount = principal;
-        let upfrontPaid = 0;
+        let upfrontPaid    = 0;
 
         if (state.commissionPayment === 'financed') {
             financedAmount = principal + commissionAmount;
-            upfrontPaid = 0;
+            upfrontPaid    = 0;
         } else {
             financedAmount = principal;
-            upfrontPaid = commissionAmount;
+            upfrontPaid    = commissionAmount;
         }
 
         let calcResult = null;
@@ -358,89 +780,78 @@ const LoanApp = (() => {
             calcResult = LoanEngine.calculateDecreasing(financedAmount, interestRate, months);
         }
 
-        // Całkowity koszt kredytu (odsetki + prowizja)
-        const totalCost = calcResult.totalInterest + commissionAmount;
-        // Całkowity wydatek klienta (spłacone raty + opłaty na start)
+        const totalCost         = calcResult.totalInterest + commissionAmount;
         const totalRepaidOverall = calcResult.totalRepaid + upfrontPaid;
 
         state.lastResult = {
-            principal,
-            financedAmount,
-            upfrontPaid,
+            principal, financedAmount, upfrontPaid,
             commissionPayment: state.commissionPayment,
-            months,
-            period,
-            unit: state.unit,
-            interestPercent: interestRate * 100,
-            commissionPercent: commissionRate * 100,
-            commissionAmount,
-            type: state.type,
-            firstInstallment: calcResult.firstInstallment,
-            lastInstallment: calcResult.lastInstallment,
-            totalRepaid: totalRepaidOverall,
+            months, period, unit: state.unit,
+            interestPercent:    interestRate * 100,
+            commissionPercent:  commissionRate * 100,
+            commissionAmount, type: state.type,
+            firstInstallment:   calcResult.firstInstallment,
+            lastInstallment:    calcResult.lastInstallment,
+            totalRepaid:        totalRepaidOverall,
             totalInstallmentsRepaid: calcResult.totalRepaid,
-            totalInterest: calcResult.totalInterest,
-            totalCost,
-            schedule: calcResult.schedule
+            totalInterest:      calcResult.totalInterest,
+            totalCost, schedule: calcResult.schedule
         };
 
         renderResults(state.lastResult);
     }
 
     function renderResults(result) {
+        const fmt       = (v) => currencyFormatter.format(v);
         const isUpfront = result.commissionPayment === 'upfront';
-        const hasCommission = result.commissionAmount > 0;
-        const commissionLabel = hasCommission
-            ? (isUpfront ? 'Opłacona z góry' : 'Doliczona do kredytu')
-            : 'Brak prowizji';
+        const hasComm   = result.commissionAmount > 0;
 
-        // Główna karta z ratą
+        const commLabel = hasComm
+            ? (isUpfront ? i18n.t('commLabelUpfront') : i18n.t('commLabelFinanced'))
+            : null;
+
+        // Hero
         if (result.type === 'stable') {
-            elements.heroInstallmentLabel.textContent = 'Miesięczna rata (stała)';
-            elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = hasCommission
-                ? `Stała kwota przez ${result.months} miesięcy · Prowizja ${commissionLabel.toLowerCase()}`
-                : `Stała kwota przez cały okres ${result.months} miesięcy`;
+            elements.heroInstallmentLabel.textContent   = i18n.t('heroLabelStable');
+            elements.heroInstallmentValue.textContent   = fmt(result.firstInstallment);
+            elements.heroInstallmentSubtext.textContent = i18n.t('heroSubStable', result.months, commLabel);
         } else {
-            elements.heroInstallmentLabel.textContent = 'Pierwsza rata (malejąca)';
-            elements.heroInstallmentValue.textContent = currencyFormatter.format(result.firstInstallment);
-            elements.heroInstallmentSubtext.textContent = hasCommission
-                ? `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Prowizja ${commissionLabel.toLowerCase()}`
-                : `Ostatnia rata: ${currencyFormatter.format(result.lastInstallment)} · Rata maleje co miesiąc`;
+            elements.heroInstallmentLabel.textContent   = i18n.t('heroLabelDecreasing');
+            elements.heroInstallmentValue.textContent   = fmt(result.firstInstallment);
+            elements.heroInstallmentSubtext.textContent = i18n.t('heroSubDecreasing', result.lastInstallment, commLabel, fmt);
         }
 
-        // Kafelki podsumowania
-        elements.totalRepayment.textContent = currencyFormatter.format(result.totalRepaid);
-        elements.totalCost.textContent = currencyFormatter.format(result.totalCost);
-        elements.principalAmount.textContent = currencyFormatter.format(result.principal);
-        elements.commissionCost.textContent = currencyFormatter.format(result.commissionAmount);
+        // Metrics
+        elements.totalRepayment.textContent = fmt(result.totalRepaid);
+        elements.totalCost.textContent      = fmt(result.totalCost);
+        elements.principalAmount.textContent = fmt(result.principal);
+        elements.commissionCost.textContent  = fmt(result.commissionAmount);
 
-        // Dodatkowe podpisy w kafelkach
         if (elements.commissionPaymentLabel) {
-            elements.commissionPaymentLabel.textContent = commissionLabel;
+            elements.commissionPaymentLabel.textContent = commLabel ?? i18n.t('commLabelNone');
         }
         if (elements.principalSubtext) {
-            elements.principalSubtext.textContent = (hasCommission && !isUpfront)
-                ? `Skredytowano: ${currencyFormatter.format(result.financedAmount)}`
-                : 'Kwota do dyspozycji';
+            elements.principalSubtext.textContent = (hasComm && !isUpfront)
+                ? i18n.t('commLabelPrincipalSub', result.financedAmount, fmt)
+                : i18n.t('metricPrincipalSub');
         }
 
-        // Pasek struktury spłaty
+        // Breakdown bar
         const total = result.totalRepaid;
-        const pPct = total > 0 ? (result.principal / total) * 100 : 100;
-        const iPct = total > 0 ? (result.totalInterest / total) * 100 : 0;
-        const cPct = total > 0 ? (result.commissionAmount / total) * 100 : 0;
+        const pPct  = total > 0 ? (result.principal / total) * 100 : 100;
+        const iPct  = total > 0 ? (result.totalInterest / total) * 100 : 0;
+        const cPct  = total > 0 ? (result.commissionAmount / total) * 100 : 0;
 
-        elements.barPrincipal.style.width = `${pPct}%`;
-        elements.barInterest.style.width = `${iPct}%`;
+        elements.barPrincipal.style.width  = `${pPct}%`;
+        elements.barInterest.style.width   = `${iPct}%`;
         elements.barCommission.style.width = `${cPct}%`;
 
-        elements.legendPrincipalVal.textContent = `${currencyFormatter.format(result.principal)} (${percentFormatter.format(pPct)}%)`;
-        elements.legendInterestVal.textContent = `${currencyFormatter.format(result.totalInterest)} (${percentFormatter.format(iPct)}%)`;
-        elements.legendCommissionVal.textContent = `${currencyFormatter.format(result.commissionAmount)} (${percentFormatter.format(cPct)}%)`;
+        elements.legendPrincipalVal.textContent  = `${fmt(result.principal)} (${percentFormatter.format(pPct)}%)`;
+        elements.legendInterestVal.textContent   = `${fmt(result.totalInterest)} (${percentFormatter.format(iPct)}%)`;
+        elements.legendCommissionVal.textContent = `${fmt(result.commissionAmount)} (${percentFormatter.format(cPct)}%)`;
 
         if (elements.scheduleRowsCount) {
-            elements.scheduleRowsCount.textContent = `(${result.months} rat)`;
+            elements.scheduleRowsCount.textContent = i18n.t('scheduleCountFn', result.months);
         }
 
         renderScheduleTable(result.schedule);
@@ -469,18 +880,18 @@ const LoanApp = (() => {
         if (!elements.toast) return;
         elements.toast.textContent = message;
         elements.toast.classList.add('show');
-        setTimeout(() => {
-            elements.toast.classList.remove('show');
-        }, 3000);
+        setTimeout(() => elements.toast.classList.remove('show'), 3000);
     }
 
+    // -------------------------------------------------------------------------
+    // Event binding
+    // -------------------------------------------------------------------------
     function bindEvents() {
-        // Synchronizacja suwaków i pól
         const syncPairs = [
-            { input: elements.amountInput, slider: elements.amountSlider, isFloat: false },
-            { input: elements.installmentsInput, slider: elements.installmentsSlider, isFloat: false },
-            { input: elements.interestInput, slider: elements.interestSlider, isFloat: true },
-            { input: elements.commissionInput, slider: elements.commissionSlider, isFloat: true }
+            { input: elements.amountInput,       slider: elements.amountSlider,       isFloat: false },
+            { input: elements.installmentsInput,  slider: elements.installmentsSlider,  isFloat: false },
+            { input: elements.interestInput,      slider: elements.interestSlider,      isFloat: true  },
+            { input: elements.commissionInput,    slider: elements.commissionSlider,    isFloat: true  }
         ];
 
         syncPairs.forEach(({ input, slider, isFloat }) => {
@@ -491,25 +902,20 @@ const LoanApp = (() => {
                 updateSliderFill(slider);
                 calculate();
             });
-
             slider.addEventListener('input', () => {
                 input.value = slider.value;
                 updateSliderFill(slider);
                 calculate();
             });
-
             updateSliderFill(slider);
         });
 
-        // Przełączniki jednostek
-        elements.unitYears.addEventListener('click', () => setUnit('years'));
+        elements.unitYears.addEventListener('click',  () => setUnit('years'));
         elements.unitMonths.addEventListener('click', () => setUnit('months'));
 
-        // Przełączniki rat
-        elements.tabStable.addEventListener('click', () => setInstallmentType('stable'));
+        elements.tabStable.addEventListener('click',     () => setInstallmentType('stable'));
         elements.tabDecreasing.addEventListener('click', () => setInstallmentType('decreasing'));
 
-        // Przełączniki rozliczenia prowizji
         if (elements.commUpfrontBtn) {
             elements.commUpfrontBtn.addEventListener('click', () => setCommissionPayment('upfront'));
         }
@@ -517,81 +923,46 @@ const LoanApp = (() => {
             elements.commFinancedBtn.addEventListener('click', () => setCommissionPayment('financed'));
         }
 
-        // Chipy / Presety kwot
+        // Amount chips
         document.querySelectorAll('.chip[data-amount]').forEach(chip => {
             chip.addEventListener('click', () => {
-                const val = chip.getAttribute('data-amount');
-                elements.amountInput.value = val;
-                elements.amountSlider.value = val;
+                elements.amountInput.value  = chip.getAttribute('data-amount');
+                elements.amountSlider.value = chip.getAttribute('data-amount');
                 updateSliderFill(elements.amountSlider);
                 calculate();
             });
         });
 
-        // Chipy / Presety okresów
+        // Period chips
         document.querySelectorAll('.chip[data-period]').forEach(chip => {
             chip.addEventListener('click', () => {
                 const period = parseInt(chip.getAttribute('data-period'), 10);
-                const unit = chip.getAttribute('data-unit') || 'years';
+                const unit   = chip.getAttribute('data-unit') || 'years';
                 setUnit(unit);
-                elements.installmentsInput.value = period;
+                elements.installmentsInput.value  = period;
                 elements.installmentsSlider.value = period;
                 updateSliderFill(elements.installmentsSlider);
                 calculate();
             });
         });
 
-        // Harmonogram (Accordion)
+        // Schedule accordion
         if (elements.toggleScheduleBtn && elements.scheduleContainer) {
             elements.toggleScheduleBtn.addEventListener('click', () => {
                 const isCollapsed = elements.scheduleContainer.classList.contains('collapsed');
-                if (isCollapsed) {
-                    elements.scheduleContainer.classList.remove('collapsed');
-                    elements.toggleScheduleBtn.setAttribute('aria-expanded', 'true');
-                    elements.toggleScheduleBtn.innerHTML = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                        <span>Zwiń harmonogram</span>
-                    `;
-                } else {
-                    elements.scheduleContainer.classList.add('collapsed');
-                    elements.toggleScheduleBtn.setAttribute('aria-expanded', 'false');
-                    elements.toggleScheduleBtn.innerHTML = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        <span>Pokaż pełny harmonogram</span>
-                    `;
-                }
+                elements.scheduleContainer.classList.toggle('collapsed', !isCollapsed);
+                updateToggleScheduleLabel(!isCollapsed);
             });
         }
 
-        // Kopiowanie podsumowania
+        // Copy summary
         if (elements.copySummaryBtn) {
             elements.copySummaryBtn.addEventListener('click', async () => {
                 if (!state.lastResult) calculate();
-                const r = state.lastResult;
-                const typeName = r.type === 'stable' ? 'Raty równe (annuitetowe)' : 'Raty malejące';
-                const commTypeDesc = r.commissionPayment === 'upfront' ? 'Opłacona z góry (środki własne)' : 'Doliczona do kredytu (w ratach)';
-                const rateLine = r.type === 'stable'
-                    ? `Miesięczna rata: ${currencyFormatter.format(r.firstInstallment)}`
-                    : `Pierwsza rata: ${currencyFormatter.format(r.firstInstallment)}\nOstatnia rata: ${currencyFormatter.format(r.lastInstallment)}`;
-
-                const text =
-`📊 SYMULACJA KREDYTU — KALKULATOR
----------------------------------------------
-Kwota kredytu:          ${currencyFormatter.format(r.principal)}
-Okres spłaty:           ${r.period} ${r.unit === 'years' ? 'lat' : 'miesięcy'} (${r.months} rat)
-Oprocentowanie:         ${r.interestPercent.toFixed(2)}%
-Prowizja banku:         ${r.commissionPercent.toFixed(2)}% (${currencyFormatter.format(r.commissionAmount)}) [${commTypeDesc}]
-System spłaty:          ${typeName}
----------------------------------------------
-${rateLine}
-Całkowita kwota spłaty: ${currencyFormatter.format(r.totalRepaid)}
-Całkowity koszt:        ${currencyFormatter.format(r.totalCost)} (w tym odsetki: ${currencyFormatter.format(r.totalInterest)})
----------------------------------------------
-Wygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
-
+                const text = i18n.t('copyTemplate', state.lastResult, (v) => currencyFormatter.format(v));
                 try {
                     await navigator.clipboard.writeText(text);
-                    showToast('✓ Podsumowanie skopiowane do schowka!');
+                    showToast(i18n.t('toastCopied'));
                 } catch {
                     const ta = document.createElement('textarea');
                     ta.value = text;
@@ -599,17 +970,17 @@ Wygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
                     ta.select();
                     document.execCommand('copy');
                     document.body.removeChild(ta);
-                    showToast('✓ Podsumowanie skopiowane do schowka!');
+                    showToast(i18n.t('toastCopied'));
                 }
             });
         }
 
-        // Drukuj
+        // Print
         if (elements.printBtn) {
             elements.printBtn.addEventListener('click', () => window.print());
         }
 
-        // Formularz
+        // Form submit
         if (elements.form) {
             elements.form.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -624,27 +995,36 @@ Wygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
         if (elements.resetBtn) {
             elements.resetBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                elements.amountInput.value = '100000';
+                elements.amountInput.value  = '100000';
                 elements.amountSlider.value = '100000';
                 updateSliderFill(elements.amountSlider);
 
                 setUnit('years');
-                elements.installmentsInput.value = '5';
+                elements.installmentsInput.value  = '5';
                 elements.installmentsSlider.value = '5';
                 updateSliderFill(elements.installmentsSlider);
 
-                elements.interestInput.value = '8.5';
+                elements.interestInput.value  = '8.5';
                 elements.interestSlider.value = '8.5';
                 updateSliderFill(elements.interestSlider);
 
-                elements.commissionInput.value = '0';
+                elements.commissionInput.value  = '0';
                 elements.commissionSlider.value = '0';
                 updateSliderFill(elements.commissionSlider);
 
                 setCommissionPayment('upfront');
                 setInstallmentType('stable');
                 calculate();
-                showToast('Przywrócono parametry domyślne');
+                showToast(i18n.t('toastReset'));
+            });
+        }
+
+        // Language toggle
+        if (elements.langToggleBtn) {
+            elements.langToggleBtn.addEventListener('click', () => {
+                const next = i18n.getLang() === 'pl' ? 'en' : 'pl';
+                i18n.setLang(next);
+                applyTranslations();
             });
         }
     }
@@ -653,6 +1033,7 @@ Wygenerowano w: Narzędziownik / Kalkulator Kredytowy`;
         cacheDOM();
         updateInstallmentsSliderLimits();
         bindEvents();
+        applyTranslations();
         calculate();
     }
 
